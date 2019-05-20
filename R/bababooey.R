@@ -7,16 +7,15 @@
 #' @param model Dude that's a model. It better be a freakin lBART model dude
 #' @param inputstack That's your rasterStack, boss
 #'
-#'
 #' @export
 #'
 
-predict.bart.raster <- function(model, inputstack) {
+predict.bart.raster <- function(model, inputstack, cores=3) {
 
   input.matrix <- as.matrix(getValues(inputstack))
-  output = predict.lbart(model,
+  output = predict(model,
                          input.matrix,
-                         mc.cores=3)
+                         mc.cores=cores)
 
   results <- inputstack
   output.m <- t(matrix(output$prob.test.mean,
