@@ -1,4 +1,3 @@
-
 #' @title Spatial prediction using BART
 #'
 #' @description
