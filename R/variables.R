@@ -14,7 +14,7 @@ var.imp <- function(model) {
 
   var.m <- model$varcount.mean
   nvar <- length(var.m)
-  var.s <- sapply(c(1:nvar), x <- function(j) {sd(bf$varcount[,j])})
+  var.s <- sapply(c(1:nvar), x <- function(j) {sd(model$varcount[,j])})
   var.df <- data.frame(mean=var.m,
                        sd=var.s)
 
@@ -29,7 +29,7 @@ var.imp <- function(model) {
                   position=position_dodge(.9)) +
     ylab("Mean number of branches per tree")
 
-  var.p <- sapply(c(1:nvar), x <- function(j) {sum(bf$varcount[,j] > 0)/length(bf$varcount[,j])})
+  var.p <- sapply(c(1:nvar), x <- function(j) {sum(model$varcount[,j] > 0)/length(model$varcount[,j])})
 
   var.df2 <- data.frame(proportion=var.p)
   var.df2$names <- factor(rownames(var.df))
