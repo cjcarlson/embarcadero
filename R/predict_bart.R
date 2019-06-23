@@ -3,8 +3,8 @@
 #' @description
 #' I got really sick of trying to do prediction using BART for species distribution models so here's a so-far-one-function package that fixes this. Bababooey
 #'
-#' @param model Dude that's a model. It better be a freakin lBART model dude
-#' @param inputstack That's your rasterStack, boss
+#' @param model lBART or gBART model from the BART package
+#' @param inputstack That's your rasterStack. check var names
 #'
 #' @export
 #'
