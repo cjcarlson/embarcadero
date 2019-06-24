@@ -1,7 +1,7 @@
 #' @title Spatial prediction using dbarts
 #'
 #' @description
-#' 
+#'
 #' dbarts analog code for prediction
 #'
 #' @param model model object from dbarts package
@@ -11,11 +11,11 @@
 #'
 
 predict.dbart.raster <- function(model, inputstack, cores=3) {
-  
+
   input.matrix <- as.matrix(getValues(inputstack))
   output = predict(model,
                    input.matrix)
-  
+  output = pnorm(output)
   results <- inputstack
   output.m <- t(matrix(colMeans(output),
                        nrow = ncol(results),
@@ -23,11 +23,9 @@ predict.dbart.raster <- function(model, inputstack, cores=3) {
   output.r <- raster(output.m,
                      xmn=xmin(inputstack[[1]]), xmx=xmax(inputstack[[1]]),
                      ymn=ymin(inputstack[[1]]), ymx=ymax(inputstack[[1]]),
-                     crs=inputstack[[1]]@crs) +
-    inputstack[[1]]*0
-  
-  output.r <- calc(output.r, pnorm)
+                     crs=inputstack[[1]]@crs) + inputstack[[1]]*0
+
   plot(output.r)
   return(output.r)
-  
+
 }
