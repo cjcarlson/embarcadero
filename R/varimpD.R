@@ -21,7 +21,7 @@ varimp.d <- function(model, names,plots=FALSE) {
 
 ####### STEPWISE VS REDUCTION
 
-varimp.loop <- function(x.data, y.data, n.trees=20, iter=20) {
+varimp.loop <- function(x.data, y.data, n.trees=20, iter=50) {
 
   library(ggplot2); library(Metrics)
   nvars <- ncol(x.data)
@@ -47,7 +47,7 @@ varimp.loop <- function(x.data, y.data, n.trees=20, iter=20) {
 
 
   for(index in 1:iter) {
-  quiet(model.j <- bart(x.data[,varnums], y.data, ntree = n.trees, ndpost=2500, keeptrees=TRUE))
+  quiet(model.j <- bart(x.data[,varnums], y.data, ntree = n.trees, keeptrees=TRUE))
 
   vi.j <- varimp.d(model.j, varlist)
   if(index==1) {
