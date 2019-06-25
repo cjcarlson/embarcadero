@@ -4,7 +4,7 @@
 \alias{predict.bart.raster}
 \title{Spatial prediction using BART}
 \usage{
-\method{predict}{bart.raster}(model, inputstack, cores = 3)
+predict.bart.raster(model, inputstack, cores = 3)
 }
 \arguments{
 \item{model}{lBART or gBART model from the BART package}

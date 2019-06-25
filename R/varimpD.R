@@ -1,4 +1,17 @@
 
+theme_bluewhite <- function (base_size = 11, base_family = "") {
+  theme_classic() %+replace%
+    theme(
+      panel.grid.major  = element_line(color = "white"),
+      panel.background = element_rect(fill = "lightblue"),
+      panel.border = element_rect(color = "black", fill = NA),
+      axis.line = element_line(color = "black"),
+      axis.ticks = element_line(color = "black")
+    )
+}
+
+#################################
+
 varimp.d <- function(model, names,plots=FALSE) {
 
   varimps <- colMeans(model$varcount/rowSums(model$varcount))
@@ -11,7 +24,7 @@ varimp.d <- function(model, names,plots=FALSE) {
   if(plots==TRUE){
   g1 <- ggplot2::ggplot(var.df, aes(y=varimps, x=names)) +
     geom_bar(stat="identity", color="black") +
-    ylab("Relative importance")
+    ylab("Relative importance") + theme_bluewhite()
   print(g1)
   }
 
@@ -156,17 +169,6 @@ variable.step <- function(x.data, y.data, n.trees=10, iter=50) {
   varnums <- varnums[!(varnums==which(varlist.orig==drop.var))]
   varlist <- varlist.orig[varnums]
   print(noquote("---------------------------------------"))
-  }
-
-  theme_bluewhite <- function (base_size = 11, base_family = "") {
-    theme_classic() %+replace%
-      theme(
-        panel.grid.major  = element_line(color = "white"),
-        panel.background = element_rect(fill = "lightblue"),
-        panel.border = element_rect(color = "black", fill = NA),
-        axis.line = element_line(color = "black"),
-        axis.ticks = element_line(color = "black")
-      )
   }
 
   g1 <- ggplot2::ggplot(rmses, aes(y=RMSE, x=VarsDropped)) +
