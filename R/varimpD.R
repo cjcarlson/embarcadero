@@ -19,14 +19,86 @@ varimp.d <- function(model, names,plots=FALSE) {
 
 }
 
+varimp.plot <- function(x.data, y.data, iter=50) {
+
+  library(ggplot2); library(Metrics); library(tidyverse)
+
+  nvars <- ncol(x.data)
+  varnums <- c(1:nvars)
+  varlist <- colnames(x.data)
+
+  quiet <- function(x) {
+    sink(tempfile())
+    on.exit(sink())
+    invisible(force(x))
+  }  # THANKS HADLEY
+
+
+  for (n.trees in c(10, 20, 50, 100, 150, 200)) {
+  for(index in 1:iter) {
+    quiet(model.j <- bart(x.data[,varnums], y.data, ntree = n.trees, keeptrees=TRUE))
+
+    vi.j <- varimp.d(model.j, varlist)
+    if(index==1) {
+      vi.j.df <- vi.j
+    } else {
+      vi.j.df[,index+1] <- vi.j[,2]
+    }
+  }
+  vi.j <- data.frame(vi.j.df[,1],
+                     rowMeans(vi.j.df[,-1]))
+
+  if(n.trees==10) { vi <- vi.j } else {  vi <- cbind(vi,vi.j[,2])  }
+  }
+
+  colnames(vi) <- c('variable','10','20','50','100','150','200')
+  vi <- reshape::melt(vi, "variable")
+  colnames(vi) <- c('variable','trees','imp')
+
+  vi %>% group_by(variable) %>% summarise(max = max(imp)) -> vi.fac
+  vi.fac <- vi.fac[order(-vi.fac$max),]
+
+  vi$names <- factor(vi$variable, levels=vi.fac$variable)
+
+  g1 <- ggplot2::ggplot(vi, aes(y=imp, x=names, group=trees)) +
+    geom_line(aes(color=trees)) + geom_point(size=3) + theme_classic() +
+    ylab("Relative contribution\n") + xlab("\nVariables dropped") +
+    theme(axis.text = element_text(size=10),
+          axis.title = element_text(size=14,face="bold")); print(g1)
+
+
+}
+
 ####### STEPWISE VS REDUCTION
 
-varimp.loop <- function(x.data, y.data, n.trees=20, iter=50) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+variable.step <- function(x.data, y.data, n.trees=10, iter=50) {
 
   library(ggplot2); library(Metrics)
   nvars <- ncol(x.data)
   varnums <- c(1:nvars)
-  varlist <- colnames(x.data)
+  varlist.orig <- varlist <- colnames(x.data)
+
+  comp <- complete.cases(x.data)
+  x.data <- x.data[comp,]
+  y.data <- y.data[comp]
 
   rmses <- data.frame(Variable.number=c(),RMSE=c())
   dropped.varlist <- c()
@@ -49,7 +121,8 @@ varimp.loop <- function(x.data, y.data, n.trees=20, iter=50) {
   for(index in 1:iter) {
   quiet(model.j <- bart(x.data[,varnums], y.data, ntree = n.trees, keeptrees=TRUE))
 
-  vi.j <- varimp.d(model.j, varlist)
+
+    vi.j <- varimp.d(model.j, varlist)
   if(index==1) {
     vi.j.df <- vi.j
   } else {
@@ -70,19 +143,18 @@ varimp.loop <- function(x.data, y.data, n.trees=20, iter=50) {
 
   vi.j <- data.frame(vi.j.df[,1],
                      rowMeans(vi.j.df[,-1]))
+  vi.j <- vi.j[order(vi.j[,2]),]
 
-  drop.var <- vi.j[nrow(vi.j),1]
+  drop.var <- vi.j[1,1]
   dropped.varlist <- c(dropped.varlist,as.character(drop.var))
 
-  print(noquote("Drop next:"))
-  print(noquote(as.character(drop.var)))
   rmsej <- mean(rmse.list)
 
   rmses <- rbind(rmses,c(nvars-var.j,rmsej)); colnames(rmses) <- c('VarsDropped','RMSE')
 
-  varnums <- varnums[-which(varlist==drop.var)]
-  varlist <- varlist[varnums]
-  for(i in 1:2) {print(noquote(""))}
+  varnums <- varnums[!(varnums==which(varlist.orig==drop.var))]
+  varlist <- varlist.orig[varnums]
+  print(noquote("---------------------------------------"))
   }
 
   theme_bluewhite <- function (base_size = 11, base_family = "") {
@@ -102,4 +174,10 @@ varimp.loop <- function(x.data, y.data, n.trees=20, iter=50) {
     theme(axis.text = element_text(size=12),
           axis.title = element_text(size=14,face="bold")) +
     scale_x_discrete(limits=c(0:(nrow(rmses)))); print(g1)
+
+  print(noquote("---------------------------------------"))
+  print(noquote("Final recommended variable list"))
+  varlist.final <- varlist.orig[!(varlist.orig %in% dropped.varlist[1:(which(rmses$RMSE==min(rmses$RMSE))-1)])]
+  print(noquote(varlist.final))
+  invisible(varlist.final)
 }
