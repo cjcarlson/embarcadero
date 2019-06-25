@@ -49,6 +49,7 @@ varimp.plot <- function(x.data, y.data, iter=50) {
                      rowMeans(vi.j.df[,-1]))
 
   if(n.trees==10) { vi <- vi.j } else {  vi <- cbind(vi,vi.j[,2])  }
+  print(n.trees)
   }
 
   colnames(vi) <- c('variable','10','20','50','100','150','200')
@@ -180,4 +181,37 @@ variable.step <- function(x.data, y.data, n.trees=10, iter=50) {
   varlist.final <- varlist.orig[!(varlist.orig %in% dropped.varlist[1:(which(rmses$RMSE==min(rmses$RMSE))-1)])]
   print(noquote(varlist.final))
   invisible(varlist.final)
+}
+
+########################
+
+
+
+
+
+
+
+
+
+
+
+
+
+best.variable.model <- function(xdata, ydata,
+                                iter.step=100, tree.step=10,
+                                iter.plot=100) {
+  varimp.plot(xdata, ydata, iter=iter.plot)
+  vs <- variable.step(xdata, ydata, n.trees=tree.step, iter=iter.step)
+  invisible(best.model <- bart(xdata[,vs], ydata, keeptrees=TRUE))
+  varimp.d(best.model, names=vs, plots=TRUE)
+
+
+  pred.p <- colMeans(pnorm(best.model$yhat.train))[ydata==1]
+  pred.a <- colMeans(pnorm(best.model$yhat.train))[ydata==0]
+  e <- evaluate(p=pred.p,
+                a=pred.a)
+  plot(e, 'ROC')
+
+  invisible(list(Variables=vs,
+              Model.object=best.model))
 }
