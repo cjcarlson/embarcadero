@@ -26,6 +26,7 @@ It's aggressively incomplete, with more to come hopefully. That would ideally in
 - parallelized prediction to Make More Faster
 
 __Can I help__?
+
 Please! I'm hoping to write this up for _Methods in Ecology & Evolution_ sometime this year.
 
 __Why is it called embarcadero?__
