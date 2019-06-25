@@ -1,5 +1,4 @@
-# embarcadero
-🌲🌉 Species distribution models with BART 🌉 🌲
+# 🌲🌉 Species distribution models with BART 🌉 🌲
 
 __What's BART?__ 
 Bayesian additive regression trees (BARTs) are an exciting alternative to other popular classification tree methods being used in ecology, like random forests or boosted regression trees. Whereas boosted regression trees fit an ensemble of trees each explaining smaller fractions of variance, BART starts by fitting a sum-of-trees model and then uses Bayesian "backfitting" with an MCMC algorithm to create a posterior draw. 
@@ -17,3 +16,6 @@ This package is basically a wrapper around 'dbarts'  with a few tools
 - stepwise variable elimination
 - AUC calculation 
 It's aggressively incomplete, with more to come hopefully - and if people think they would like to help, that would be welcome! I'm hoping to write this up for _Methods in Ecology & Evolution_ sometime this year.
+
+__Why is it called embarcadero?__
+Because of Embarcadero BART station, and because I'm homesick for Humphry Slocombe. 
