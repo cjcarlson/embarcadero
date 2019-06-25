@@ -6,7 +6,7 @@ Bayesian additive regression trees (BARTs) are an exciting alternative to other 
 
 __Why BART?__ 
 
-BART does well with model-free variable selection and handles irrelevant predictors well; the Bayesian aspect also comes with perks, like automated confidence intervals on partial dependency plots. So far, it also seems to avoid the problem BRTs have for niche modeling: with no automated selection of tree depth or tree complexity, BRTs tend to overfit especially with randomly-generated pseudoabsences and ensembling over subsets. In previous "bake-offs", BART commonly outperforms other methods.
+BART does well with model-free variable selection and handles irrelevant predictors well; the Bayesian aspect also comes with perks, like posterior distributions on predictions (without having to bootstrap, like you do with BRTs) and automated confidence intervals on partial dependency plots. So far, it also seems to avoid the problem BRTs have for niche modeling: with no automated selection of tree depth or tree complexity, BRTs tend to overfit especially with randomly-generated pseudoabsences and ensembling over subsets. In previous "bake-offs", BART commonly outperforms other methods.
 
 __Are BARTs new to ecology?__
 
@@ -19,7 +19,14 @@ This package is basically a wrapper around 'dbarts'  with a few tools
 - variable importance 
 - stepwise variable elimination
 - AUC calculation 
-It's aggressively incomplete, with more to come hopefully - and if people think they would like to help, that would be welcome! I'm hoping to write this up for _Methods in Ecology & Evolution_ sometime this year.
+
+It's aggressively incomplete, with more to come hopefully. That would ideally include:
+- prediction quantiles from the posteriors (easy, next to be added)
+- automatic Nice Plots for partials
+- parallelized prediction to Make More Faster
+
+__Can I help__?
+Please! I'm hoping to write this up for _Methods in Ecology & Evolution_ sometime this year.
 
 __Why is it called embarcadero?__
 
