@@ -19,9 +19,9 @@ This package is basically a wrapper around 'dbarts'  with a few tools
 - variable importance 
 - stepwise variable elimination
 - AUC calculation 
+- a 95% credible interval from the posterior distribution
 
 It's aggressively incomplete, with more to come hopefully. That would ideally include:
-- prediction quantiles from the posteriors (easy, next to be added)
 - automatic Nice Plots for partials
 - parallelized prediction to Make More Faster
 
