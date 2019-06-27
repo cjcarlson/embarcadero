@@ -8,7 +8,6 @@
 #' @param names The variable names (not conserved in dbarts necessarily)
 #' @param plots Turn this on for a nice variable contribution plot
 #'
-#' @returns Variable importance and (optionally) a plot
 #'
 #' @export
 #'
