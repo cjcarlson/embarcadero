@@ -8,5 +8,8 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports: raster,
-  BART
+  dbarts,
+  Metrics,
+  tidyverse,
+  dismo
 RoxygenNote: 6.1.1

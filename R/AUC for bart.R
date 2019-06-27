@@ -11,7 +11,7 @@
 
 bart.auc <- function(model, true.vector) {
 
-  pred <- prediction(model$prob.train.mean, true.vector)
+  pred <- prediction(colMeans(pnorm(model.obj$Model.object$yhat.train)), true.vector)
   print('AUC = ')
   print(performance(pred,"auc")@y.values[[1]])
   plot(performance(pred, "tpr", "fpr"),main='Receiver operator curve')
