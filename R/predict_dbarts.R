@@ -2,10 +2,10 @@
 #'
 #' @description
 #'
-#' dbarts analog code for prediction
+#' Spatial prediction of a BART model
 #'
 #' @param model model object from dbarts package
-#' @param inputstack That's your rasterStack. check var names
+#' @param inputstack A RasterStack of environmental predictors; make sure they have the same names as the predictors that went into the model object.
 #'
 #' @export
 #'
