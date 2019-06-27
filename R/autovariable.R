@@ -47,7 +47,7 @@ variable.step <- function(x.data, y.data, n.trees=10, iter=50) {
       quiet(model.j <- bart(x.data[,varnums], y.data, ntree = n.trees, keeptrees=TRUE))
       
       
-      vi.j <- varimp.d(model.j, varlist)
+      vi.j <- varimp(model.j, varlist)
       if(index==1) {
         vi.j.df <- vi.j
       } else {

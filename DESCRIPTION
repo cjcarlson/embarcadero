@@ -10,5 +10,6 @@ Depends: raster,
   dbarts,
   Metrics,
   tidyverse,
-  dismo
+  dismo,
+  ROCR
 RoxygenNote: 6.1.1

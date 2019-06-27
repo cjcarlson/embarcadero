@@ -10,7 +10,7 @@
 #' @param tree.step How many trees to use in the variable set reduction
 #' @param iter.plot How many iterations to use in the first diagnostic plot 
 #' 
-#' 
+#' @return Returns a list of (1) Variables (the optimal variable set) and (2) Model.object, the best model using those
 #' 
 #' @export
 #'
@@ -23,7 +23,7 @@ bart.var <- function(xdata, ydata,
   varimp.plot(xdata, ydata, iter=iter.plot)
   vs <- variable.step(xdata, ydata, n.trees=tree.step, iter=iter.step)
   invisible(best.model <- bart(xdata[,vs], ydata, keeptrees=TRUE))
-  varimp.d(best.model, names=vs, plots=TRUE)
+  varimp(best.model, names=vs, plots=TRUE)
   
   
   pred.p <- colMeans(pnorm(best.model$yhat.train))[ydata==1]
