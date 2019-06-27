@@ -9,8 +9,8 @@ predict.dbart.raster(model, inputstack, ci = FALSE)
 \arguments{
 \item{model}{model object from dbarts package}
 
-\item{inputstack}{That's your rasterStack. check var names}
+\item{inputstack}{A RasterStack of environmental predictors; make sure they have the same names as the predictors that went into the model object.}
 }
 \description{
-dbarts analog code for prediction
+Spatial prediction of a BART model
 }
