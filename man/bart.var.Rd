@@ -18,6 +18,9 @@ bart.var(xdata, ydata, iter.step = 100, tree.step = 10,
 
 \item{iter.plot}{How many iterations to use in the first diagnostic plot}
 }
+\value{
+Returns a list of (1) Variables (the optimal variable set) and (2) Model.object, the best model using those
+}
 \description{
 A wrapper for a few core functions, including two diagnostic plots of variable importance and the automated stepwise variable set reduction algorithm. Returns an object with the model and the list of the best variables
 }
