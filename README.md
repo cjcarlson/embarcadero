@@ -10,7 +10,7 @@ BART does well with model-free variable selection and handles irrelevant predict
 
 __Are BARTs new to ecology?__
 
-No, there is nothing new under the sun. [Yen et al.](https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1600-0587.2011.06651.x) used BARTs to examine habitat selection of birds back in 2000. But so far, no, no one is using them for species distribution modeling (as far as I can tell).
+No, there is nothing new under the sun. [Yen et al.](https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1600-0587.2011.06651.x) used BARTs to examine habitat selection of birds back in 2011. But so far, no, no one is using them for species distribution modeling (as far as I can tell).
 
 __What does embarcadero do?__
 
