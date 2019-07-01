@@ -27,7 +27,7 @@ It's aggressively incomplete, with more to come hopefully. That would ideally in
 
 __Can I help__?
 
-Please! I'm hoping to write this up for _Methods in Ecology & Evolution_ sometime this year.
+Please! I'm currently writing this up for _Methods in Ecology & Evolution_ and hope to submit by October. The vignette in development will be part of that paper. 
 
 __Why is it called embarcadero?__
 
