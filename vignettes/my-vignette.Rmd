@@ -1,6 +1,6 @@
 ---
 title: "Mapping Hyalomma and CCHF in Africa"
-output: rmarkdown::html_vignette
+output: pdf_document
 vignette: >
   %\VignetteIndexEntry{my-vignette}
   %\VignetteEngine{knitr::rmarkdown}
@@ -36,6 +36,10 @@ library(velox)
 
 Doors are closing; please stand clear of the doors.
 
+# Mapping Hyalomma
+
+We're going to make a suitability layer for _Hyalomma truncatum_, a possible CCHF vector, that we can use in the CCHF map.
+
 ## Data entry
 
 Let's start by loading in the sample data and predictor set. A set of 11 pre-processed covariates are automatically provided: WorldClim variables BIO 1, 2, 5, 6, 12, 13, 14, and 15; NDVI mean and amplitude; and percent cropland. 
@@ -52,18 +56,28 @@ head(ticks)
 nrow(ticks)
 ```
 
-First, we extract the data from the presence points.
+First, we extract the data from the presence points. But let's spatially thin those points first, since they're a little, uh, dense.
 
 ```{r}
-pres.cov <- raster::extract(covs, SpatialPoints(ticks[,c('Longitude.X','Latitude.Y')]))
+
+
+mod <- SpatialPointsDataFrame(ticks[,3:4],data.frame(ticks[,1]))
+names(mod@data) <- 'Presence'
+# Rasterizing makes unique points to the grid cell
+tmp=rasterize(mod, covs[[1]], field="Presence", fun="min")
+pts.sp1=rasterToPoints(tmp, fun=function(x){x>0})
+nrow(pts.sp1)
+
+pres.cov <- raster::extract(covs, pts.sp1[,1:2])
 head(pres.cov)
+
 ```
 
 Next, let's generate an equal number of pseudoabsences around Africa to the number of presences we have. 
 
 ```{r}
 #Generate the data
-absence <- randomPoints(covs,nrow(ticks))
+absence <- randomPoints(covs,nrow(ticks)) 
 abs.cov <- raster::extract(covs, absence)
 
 #Code the response
@@ -99,7 +113,7 @@ A high AUC value indicates our model performs well. The AUC function also return
 What do the predictions look like? To make a predicted raster, we have to use _embarcadero_'s wrapper for the native _predict_ function in _dbarts_. First, we'll aggregate the predictors a bit so it'll predict faster.
 
 
-```{r, out.width = '40%'}
+```{r, fig.fullwidth=TRUE}
 
 cov.big <- covs
 
@@ -119,18 +133,121 @@ plot(pred.prelim)
 
 # What does it look like with the threshold?
 
- plot(pred.prelim > 0.54)
- points(SpatialPoints(ticks[,c('Longitude.X','Latitude.Y')]), 
-        pch=16, cex=0.5)
+points(SpatialPoints(ticks[,c('Longitude.X','Latitude.Y')]), 
+        pch=16, cex=0.2)
 
 ```
 
-This doesn't seem to be behaving great - it's definitely overfitting. We're also getting predictions in places we don't have any records, like North Africa. That could be good if we think that's suitable climatic space, but with much of the inhabited area not being predicted, let's revisit that later.
+This model seems okay. We're getting predictions in places we don't have any records, like North Africa. That could be good if we think that's suitable climatic space (and if you know Hyalomma, you know there's definitely some species there, though posibly not truncatum), but with much of the inhabited area not being predicted, let's revisit that later.
 
-Maybe we need to thin out some of this occurrence data to one point per pixel - this is SUPER dense, and it's swamping out the minor points in the prediction.
+## Variable Selection
 
+Next, let's try some automated variable selection. There's a few different component pieces that do this in _embarcadero_.
 
-Next, let's try some automated variable selection.
+First, let's look at the variable contributions in the existing model:
 
-How's our model looking now? Do we need a different threshold?
+```{r}
+varimp(model=bad.model, 
+       names=names(covs), 
+       plots = TRUE)
+```
 
+This tells us roughly how the variables contribute so far, but it doesn't tell us who to eliminate first - we don't want to eliminate based on a single run.
+
+Previously, it's been suggested that the best variable diagnostic for BART is to run models with progressively smaller numbers of trees - and as you get down to 10 or 20 trees per model, the contributions of bad or irrelevant variables will drop out. This is because like most CART methods, BART has the ability to overfit on variables with low information content. 
+
+What _varimp.plot_ does is run variable importance for hundreds of models at different tree levels. Let's say 10 models per combination is enough. This will print each level of models it's run, and then it will make a plot that shows us variable importance across runs.
+
+```{r}
+varimp.plot(x.data=all.cov[,1:11], 
+            y.data=all.cov[,'tick'],
+            iter=10)
+```
+
+Out of all the variables, "crop" seems to be especially undesirable as a predictor. A few other variables seem like they might not be helping the model either, but we probably need a systematic way to deal with that.
+
+Automated stepwise reduction isn't the best way to do things in machine learning, but it's consistent over a high number of iterations, and is the current stopgap in the package. _variable.step_ will automate the process, starting with the full feature set, fitting _iter_ models with _n.trees_ each (use a small value - 10 or 20), and reducing stepwise based on the variable with the lowest importance each iteration. Then, it'll make a recommendation for a feature set based on root mean square error (RMSE). That's not perfect, and you can take or leave it as an approach. 
+
+Expert knowledge about variable importance and cautious inclusion will _always_ be better, epistemologically, than automated stepwise feature set reduction.
+
+```{r}
+varlist <- variable.step(x.data=all.cov[,1:11],
+              y.data=all.cov[,'tick'],
+              n.trees=10,
+              iter=10)
+```
+
+Our stepwise reduction only cuts crop - that's great. Normally this step cuts a few variables - it's probably a good sign about our _a priori_ variable selection that not much got dropped. Let's run a "good" model with that predictor cut.
+
+```{r}
+
+# Rerun the model
+good.model <- bart(all.cov[,varlist], all.cov[,'tick'], keeptrees=TRUE)
+# Check the AUC
+bart.auc(good.model, all.cov[,'tick'])
+# Do the spatial prediction
+hytr.layer <- predict.dbart.raster(model = good.model,
+                                    inputstack = cov.big[[varlist]])
+# How's it look?
+plot(hytr.layer)
+
+```
+
+# Mapping CCHF
+
+Alright. Now let's get back to business by building the CCHF map. We're going to use the same predictors as we used for _H. truncatum_ plus the suitability layer.
+
+## Running the CCHF model
+
+This time, let's just do the variable selection up front. And instead of running each piece separately, we can run a full-service model using _bart.var_ from _embarcadero_. That runs each of the steps we did above, including running the reduced-feature model, and returns a list object with a model and a variable set.
+
+```{r}
+
+# Update those pesky covariates
+# This should just be covs once it's at the right resolution
+cov.big <- stack(cov.big, hytr.layer)
+names(cov.big)[12]='hytr'
+
+# Read in the data
+cchf <- read.csv('~/Github/embarcadero/vignettes/CCHF_1953_2012_Messina.csv')
+head(cchf)
+nrow(cchf)
+
+# Spatial thinning checks; this also limits it to African points
+cchf <- cchf[,c('LONGITUDE','LATITUDE')]; cchf$Presence = 1
+cchf <- SpatialPointsDataFrame(cchf[,1:2],data.frame(Presence=cchf[,3]))
+tmp=rasterize(cchf, cov.big[[1]], field="Presence", fun="min")
+pts.sp1=rasterToPoints(tmp, fun=function(x){x>0})
+nrow(pts.sp1)
+
+# Extract presence values
+pres.cov <- raster::extract(cov.big, pts.sp1[,1:2])
+head(pres.cov)
+
+#Generate pseudoabsences
+absence <- randomPoints(covs,500) 
+abs.cov <- raster::extract(cov.big, absence)
+
+#Code the response
+pres.cov <- data.frame(pres.cov); pres.cov$cchf <- 1
+abs.cov <- data.frame(abs.cov); abs.cov$cchf <- 0
+
+# And one to bind them
+all.cov <- rbind(pres.cov, abs.cov)
+all.cov <- all.cov[complete.cases(all.cov),]; nrow(all.cov)
+head(all.cov)
+
+# This part automates the variable selection and returns the model
+cchf.model <- bart.var(xdata=all.cov[,1:12], 
+                       ydata=all.cov[,'cchf'], 
+                       iter.step = 100, 
+                       tree.step = 10,
+                       iter.plot = 100)
+
+# Do the spatial prediction
+cchf.map <- predict.dbart.raster(model = cchf.model,
+                                    inputstack = cov.big[[varlist]])
+# How's it look?
+plot(cchf.map)
+
+```
