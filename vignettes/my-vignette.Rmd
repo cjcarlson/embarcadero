@@ -31,6 +31,7 @@ There's also just going to be some general comments ont he process of using BART
 
 ```{r setup}
 library(embarcadero)
+library(velox)
 ```
 
 Doors are closing; please stand clear of the doors.
@@ -95,15 +96,41 @@ bart.auc(bad.model, all.cov[,'tick'])
 
 A high AUC value indicates our model performs well. The AUC function also returns an optimal threshold that maximizes the true skill statistic (TSS), and the sensitivity/specificity of the model at that cutoff (alpha).
 
-What do the predictions look like? To make a predicted raster, we have to use _embarcadero_'s wrapper for the native _predict_ function in _dbarts_
+What do the predictions look like? To make a predicted raster, we have to use _embarcadero_'s wrapper for the native _predict_ function in _dbarts_. First, we'll aggregate the predictors a bit so it'll predict faster.
 
 
-```{r}
+```{r, out.width = '40%'}
+
+cov.big <- covs
+
+  for(i in 1:nlayers(covs)) {
+    vx <- velox(covs[[i]])
+    vx$aggregate(factor=c(5,5), aggtype='mean')
+    if (i == 1) { cov.big <- stack(vx$as.RasterLayer())
+    } else { cov.big <- stack(cov.big,vx$as.RasterLayer())
+    }
+    print(i)
+  }
+
+names(cov.big) <- names(covs)
 pred.prelim <- predict.dbart.raster(model = bad.model,
-                                    inputstack = covs)
+                                    inputstack = cov.big)
 plot(pred.prelim)
 
 # What does it look like with the threshold?
 
-# plot(pred.prelim)
+ plot(pred.prelim > 0.54)
+ points(SpatialPoints(ticks[,c('Longitude.X','Latitude.Y')]), 
+        pch=16, cex=0.5)
+
 ```
+
+This doesn't seem to be behaving great - it's definitely overfitting. We're also getting predictions in places we don't have any records, like North Africa. That could be good if we think that's suitable climatic space, but with much of the inhabited area not being predicted, let's revisit that later.
+
+Maybe we need to thin out some of this occurrence data to one point per pixel - this is SUPER dense, and it's swamping out the minor points in the prediction.
+
+
+Next, let's try some automated variable selection.
+
+How's our model looking now? Do we need a different threshold?
+
