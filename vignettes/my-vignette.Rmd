@@ -1,0 +1,94 @@
+---
+title: "Mapping Hyalomma and CCHF in Africa"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+suppressMessages(library(tidyverse))
+```
+
+So you're interested in using _embarcadero_ to do species distribution modeling with Bayesian additive regression trees! That's great. BARTs are a powerful way to do machine learning and, while not a new method per se, they are very new for SDMs. 
+
+Most of the core functionality of _embarcadero_ is actually a wrapper for _dbarts_, which runs the actual BART fitting process. This vignete will show you
+
+1. How to run BARTs
+1. Variable importance measures
+1. Automated variable selection
+1. How spatial prediction works with the posterior distribution 
+1. Cool things you can do with partial dependence plots
+
+There's also just going to be some general comments ont he process of using BARTs, the challenges to working with them, and some things that are hopefully coming next.
+
+
+```{r setup}
+library(embarcadero)
+```
+
+Doors are closing; please stand clear of the doors.
+
+## Data entry
+
+Let's start by loading in the sample data and predictor set. A set of 11 pre-processed covariates are automatically provided: WorldClim variables BIO 1, 2, 5, 6, 12, 13, 14, and 15; NDVI mean and amplitude; and percent cropland. 
+```{r}
+files <- list.files('~/Github/embarcadero/vignettes/covariates', full.names=TRUE)
+covs <- raster::stack(lapply(files, raster))
+```
+
+Hyalomma truncatum occurrence data is taken from the Cumming tick dataset
+
+```{r}
+ticks <- read.csv('~/Github/embarcadero/vignettes/Hytr.csv')
+head(ticks)
+nrow(ticks)
+```
+
+First, we extract the data from the presence points.
+
+```{r}
+pres.cov <- raster::extract(covs, SpatialPoints(ticks[,c('Longitude.X','Latitude.Y')]))
+head(pres.cov)
+```
+
+Next, let's generate an equal number of pseudoabsences around Africa to the number of presences we have. 
+
+```{r}
+#Generate the data
+absence <- randomPoints(covs,nrow(ticks))
+abs.cov <- raster::extract(covs, absence)
+
+#Code the response
+pres.cov <- data.frame(pres.cov); pres.cov$tick <- 1
+abs.cov <- data.frame(abs.cov); abs.cov$tick <- 0
+
+# And one to bind them
+all.cov <- rbind(pres.cov, abs.cov)
+head(all.cov)
+
+# Let's just clean it up a little bit
+all.cov <- all.cov[complete.cases(all.cov),]
+```
+
+Now we have a dataset ready to model. 
+
+## Running models with dbarts
+
+We could try something really simple on defaults, right out the gate. The _bart_ function in _dbarts_ can just be run on defaults:
+
+```{r}
+bad.model <- bart(all.cov[,1:11], all.cov[,'tick'], keeptrees=TRUE)
+```
+
+That's well and good, but dbarts doesn't have great tools to evaluate what the models do, or how they're working as predictive tools. Plus, we can't see the spatial prediction, which makes it hard to know if it's even looking plausible. One quick trick is to use the _bart.auc_ function in _embarcadero_, which uses a _dbarts_ model object and the vector of true data.
+
+```{r}
+bart.auc(bad.model, all.cov[,'tick'])
+```
