@@ -87,8 +87,23 @@ We could try something really simple on defaults, right out the gate. The _bart_
 bad.model <- bart(all.cov[,1:11], all.cov[,'tick'], keeptrees=TRUE)
 ```
 
-That's well and good, but dbarts doesn't have great tools to evaluate what the models do, or how they're working as predictive tools. Plus, we can't see the spatial prediction, which makes it hard to know if it's even looking plausible. One quick trick is to use the _bart.auc_ function in _embarcadero_, which uses a _dbarts_ model object and the vector of true data.
+That's well and good, but dbarts doesn't have great tools to evaluate what the models do, or how they're working as predictive tools. Plus, we can't see the spatial prediction, which makes it hard to know if it's even looking plausible. One quick trick is to use the _bart.auc_ function in _embarcadero_, which uses the _dbarts_ model object (or an _embarcadero_ model object) and the vector of true data.
 
 ```{r}
 bart.auc(bad.model, all.cov[,'tick'])
+```
+
+A high AUC value indicates our model performs well. The AUC function also returns an optimal threshold that maximizes the true skill statistic (TSS), and the sensitivity/specificity of the model at that cutoff (alpha).
+
+What do the predictions look like? To make a predicted raster, we have to use _embarcadero_'s wrapper for the native _predict_ function in _dbarts_
+
+
+```{r}
+pred.prelim <- predict.dbart.raster(model = bad.model,
+                                    inputstack = covs)
+plot(pred.prelim)
+
+# What does it look like with the threshold?
+
+# plot(pred.prelim)
 ```
