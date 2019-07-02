@@ -1,0 +1,99 @@
+library(dismo)
+library(ENMeval)
+library(fasterize)
+library(maps)
+library(rgdal)
+library(rgeos)
+library(sdmpredictors)
+library(spdep)
+
+ms <- load_layers(c('MS_bathy_5m','MS_biogeo01_aspect_EW_5m',
+                    'MS_biogeo05_dist_shore_5m','MS_biogeo06_bathy_slope_5m'))
+
+bo1 <- load_layers('BO2_chlomean_ss')
+bo2 <- load_layers('BO2_curvelmean_bdmean')
+bo3 <- load_layers('BO2_salinitymin_bdmean')
+bo4 <- load_layers('BO2_tempmean_bdmean')
+bo5 <- load_layers('BO2_temprange_bdmean')
+
+bo1 <- raster::extend(bo1[[1]],bo2,value=NA)
+bo <- stack(bo1,bo2,bo3,bo4,bo5)
+
+layers <- stack(ms, bo)
+
+
+
+#########################
+
+
+setwd('C:/Users/cjcar/Dropbox/Global Algae Macroecology & Mapping Analysis (GAMMA)/LME66')
+lme <- readOGR(dsn='.',layer='LMEs66')
+n <- poly2nb(lme, queen=TRUE, row.names = lme$LME_NAME)
+
+plot(lme)
+plot(n, coordinates(lme), add=TRUE)
+
+adj <- nb2mat(n, zero.policy=TRUE)
+adj[adj>0] <- 1
+
+##############
+
+rawdata <- read.csv('file:///C:/Users/cjcar/Dropbox/Global Algae Macroecology & Mapping Analysis (GAMMA)/Datasets/Final data for SciData/fixedbuffer/buffered1.csv')
+
+ulla <- rawdata[rawdata$species=='Saccharina sessilis',]
+
+pts <- SpatialPoints(ulla[,c('longitude','latitude')])
+pts <- SpatialPoints(unique(pts@coords))
+pts@proj4string <- lme@proj4string
+
+ovr <- over(pts,lme)
+pts.sub <- pts[!is.na(ovr$LME_NAME),]
+
+regions <- na.omit(unique(ovr$LME_NAME))
+regions2 <- rownames(adj)[colSums(adj[rownames(adj) %in% regions,])>0]
+regions2 <- unique(c(as.character(regions), regions2))
+lme.sp.small <- lme[lme$LME_NAME %in% regions,]
+lme.sp.big <- lme[lme$LME_NAME %in% regions2,]
+
+vshp <- fasterize(st_as_sf(lme.sp.small), layers[[1]])
+layer.sp <- layers+(vshp-1)
+vshp <- fasterize(st_as_sf(lme.sp.big), layers[[1]])
+layer.sp.big <- layers+(vshp-1)
+
+npts <- length(pts.sub)
+pabs <- spsample(lme.sp.big, npts,
+                 type='random')
+
+par(mar=c(1,1,1,1))
+map('world')
+points(pabs, pch=16, cex=0.9, col='red')
+points(ulla[,c('longitude','latitude')],pch=16,cex=0.9)
+c<-detectCores()
+# e.g. your computer has four partitions basically so we're gonna run parallel on 3 of them, making this 3x faster
+enmeval_results<- ENMevaluate(pts.sub@coords, layer.sp.big, bg.coords=pabs, method='checkerboard1',parallel=TRUE,numCores=c-1)
+
+enm.no <-function(model.object) {
+  if(sum(is.na(model.object@results$delta.AICc))>0) {
+    which(model.object@results$Mean.AUC == max(model.object@results$Mean.AUC)) [1]
+  } else {
+    which(model.object@results$delta.AICc == 0) [1]
+  }
+}
+
+num <- enm.no(enmeval_results)
+
+model <- enmeval_results@predictions[[num]]
+me <- enmeval_results@models[[num]]
+plot(enmeval_results@predictions[[num]])
+points(enmeval_results@occ.pts, pch=16, col= enmeval_results@occ.grp, cex=.75)
+
+### AT THIS STEP IN THIS PIPELINE YOU COULD EITHER PREDICT JUST IN LAYER.SP OR LAYER.SP.BIG
+rtemp <- predict(me,layer.sp.big)
+plot(rtemp)
+points(pts.sub)
+tdata <- extract(rtemp,pts.sub)
+thresh <- quantile(na.omit(tdata),0.05)
+plot(rtemp>thresh)
+
+
+map1 <- (rtemp>thresh)

@@ -1,0 +1,132 @@
+#### INSTALL (DON'T RUN) ####
+#install.packages('dismo')
+#install.packages('ENMeval')
+#install.packages('fasterize')
+#install.packages('maps')
+#install.packages('PresenceAbsence')
+#install.packages('rgdal')
+#install.packages('rgeos')
+#install.packages('sdmpredictors')
+#install.packages('spdep')
+
+
+#### MAIN CODE
+library(dismo)
+#library(doParallel)
+library(ENMeval)
+library(fasterize)
+library(foreach)
+library(maps)
+library(parallel)
+library(PresenceAbsence)
+library(rgdal)
+library(rgeos)
+library(sdmpredictors)
+library(spdep)
+
+ms <- load_layers(c('MS_bathy_5m','MS_biogeo01_aspect_EW_5m',
+                    'MS_biogeo06_bathy_slope_5m'))
+
+bo1 <- load_layers('BO2_chlomean_ss')
+bo2 <- load_layers('BO2_curvelmean_bdmean')
+bo3 <- load_layers('BO2_salinitymin_bdmean')
+bo4 <- load_layers('BO2_tempmean_bdmean')
+bo5 <- load_layers('BO2_temprange_bdmean')
+
+bo1 <- raster::extend(bo1[[1]],bo2,value=NA)
+bo <- stack(bo1,bo2,bo3,bo4,bo5)
+
+layers <- stack(ms, bo)
+
+
+#########################
+
+lme <- readOGR(dsn='/nfs/ccarlson-data/sushiplatter',layer='LMEs66')
+n <- poly2nb(lme, queen=TRUE, row.names = lme$LME_NAME)
+
+plot(lme)
+plot(n, coordinates(lme), add=TRUE)
+
+adj <- nb2mat(n, zero.policy=TRUE)
+adj[adj>0] <- 1
+
+##############
+
+rawdata <- read.csv('/nfs/ccarlson-data/sushiplatter/buffered1.csv',
+                    stringsAsFactors = FALSE)
+rawpts <- SpatialPoints(rawdata[,c('longitude','latitude')])
+rawdata <- unique(rawdata[,c('species_final','longitude','latitude')])
+
+# THIS IS THE SPOT WHERE PARALLELIZATION NEEDS TO HAPPEN
+
+spnum <- length(table(rawdata$species_final)[table(rawdata$species_final)>39])
+names <- names(table(rawdata$species_final)[table(rawdata$species_final)>39])
+
+# registerDoParallel(cores=2)
+
+start_time <- Sys.time()
+list.of.models <- foreach(i=1:2) %do% {
+
+  #### this is interior
+
+  speciesdf <- rawdata[rawdata$species_final==names[[i]],]
+  pts <- SpatialPoints(speciesdf[,c('longitude','latitude')])
+  pts <- SpatialPoints(unique(pts@coords))
+  pts@proj4string <- lme@proj4string
+
+  ovr <- over(pts,lme)
+  pts.sub <- pts[!is.na(ovr$LME_NAME),]
+
+  regions <- as.character(na.omit(unique(ovr$LME_NAME)))
+  if(length(regions)==1) {
+    regions2 <- rownames(adj)[adj[rownames(adj) == regions,]]
+  } else {
+    regions2 <- rownames(adj)[colSums(adj[rownames(adj) %in% regions,])>0]
+  }
+  regions2 <- unique(c(as.character(regions), regions2))
+  lme.sp.small <- lme[lme$LME_NAME %in% regions,]
+  lme.sp.big <- lme[lme$LME_NAME %in% regions2,]
+
+  vshp <- fasterize(st_as_sf(lme.sp.small), layers[[1]])
+  layer.sp <- layers+(vshp-1)
+  vshp <- fasterize(st_as_sf(lme.sp.big), layers[[1]])
+  layer.sp.big <- layers+(vshp-1)
+
+  pts.sub.i <- pts.sub[which(!is.na(raster::extract(layer.sp, pts.sub)[,1]))]
+  # why does this not cut the ones which are NA's?????
+
+  npts <- length(pts.sub.i)
+  pabs <- spsample(lme.sp.small, 1000,
+                   type='random')
+
+  cor<-detectCores()
+
+  setwd('/nfs/ccarlson-data/sushiplatter')
+
+  enmeval_results <- tryCatch(suppressWarnings(ENMevaluate(pts.sub.i@coords,
+                                                           layer.sp, bg.coords=pabs, method='checkerboard1',
+                                                           fc=c('L','Q','T','LQ','LQP','LQPT'),
+                                                           algorithm = 'maxent.jar',
+                                                           parallel=TRUE,numCores=cor)),
+                              error=function(e) {NA})
+
+  if(is.na(enmeval_results)) {return(NA)}
+
+  enm.no <-function(model.object) {
+    if(sum(!is.na(model.object@results$delta.AICc))==0) {
+      table <- model.object@results
+      table$settings[which(model.object@results$avg.test.AUC == max(model.object@results$avg.test.AUC)) [1]]
+    } else {
+      table <- na.omit(model.object@results)
+      table$settings[which(table$delta.AICc == 0) [1]]
+    }
+  }
+
+  num <- enm.no(enmeval_results)
+  return(me <- enmeval_results@models[[num]])
+}
+
+end_time <- Sys.time()
+as.numeric(end_time - start_time, units = "mins")/100 # average per species
+
+saveRDS(list.of.models, file = "my_data.rds")

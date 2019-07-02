@@ -1,0 +1,302 @@
+---
+title: "Mapping \textit{Hyalomma} and CCHF in Africa"
+output: pdf_document
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+suppressMessages(library(tidyverse))
+```
+
+# Getting Started
+
+So you're interested in using \texttt{embarcadero} to do species distribution modeling with Bayesian additive regression trees! That's great. BARTs are a powerful way to do machine learning and, while not a new method per se, they are very new for SDMs. 
+
+Most of the core functionality of \texttt{embarcadero} is actually a wrapper for \texttt{dbarts}, which runs the actual BART fitting process. This vignete will show you
+
+1. How to run BARTs
+1. Variable importance measures
+1. Automated variable selection
+1. Partial dependence plots
+1. Visualizing the posterior distribution
+
+There's also just going to be some general comments on the process of using BARTs, the challenges to working with them, and some things that are hopefully coming next.
+
+
+```{r setup}
+library(embarcadero, quietly = TRUE)
+library(velox)
+
+set.seed(12345)
+```
+
+Doors are closing; please stand clear of the doors.
+
+# Mapping Hyalomma
+
+We're going to make a suitability layer for _Hyalomma truncatum_, a possible CCHF vector, that we can use in the CCHF map.
+
+## Data entry
+
+Let's start by loading in the sample data and predictor set. Based on some expert opinion, I picked a handful of variables I thought might work well (and it's already reduced down to minimize redunandancy): 
+
+* BIO1: Mean annual temperature
+* BIO2: Mean diurnal range
+* BIO5: Max temperature of warmest month
+* BIO6: Min temperature of coldest month
+* BIO12: Mean annual precipitation
+* BIO13: Precipitation of wettest month
+* BIO14: Precipitation of driest month
+* BIO15: Precipitation seasonality
+* Mean NDVI (normalized difference vegetation index)
+* NDVI amplitude
+* Percent cropland by pixel
+
+Let's read in the covariates, and make a bigger stack just to do some faster predictions along the way; \texttt{velox} works well for this. BARTs predict fairly slowly with \texttt{dbarts} because it's not parallelized yet. Other packages have that capacity, but less functionality for other things, so we chose functionality at the expense of speed; hopefully future versions will build on this. 
+
+```{r}
+files <- list.files('~/Github/embarcadero/vignettes/covariates', full.names=TRUE)
+covs <- raster::stack(lapply(files, raster))
+
+cov.big <- covs
+
+  for(i in 1:nlayers(covs)) {
+    vx <- velox(covs[[i]])
+    vx$aggregate(factor=c(5,5), aggtype='mean')
+    if (i == 1) { cov.big <- stack(vx$as.RasterLayer())
+    } else { cov.big <- stack(cov.big,vx$as.RasterLayer())
+    }
+    print(i)
+  }
+
+names(cov.big) <- names(covs)
+```
+
+Hyalomma truncatum occurrence data is taken from the Cumming tick dataset
+
+```{r}
+ticks <- read.csv('~/Github/embarcadero/vignettes/Hytr.csv')
+head(ticks)
+nrow(ticks)
+```
+
+First, we extract the data from the presence points. But let's spatially thin those points first, to one point per raster grid cell, since they're a little over-aggregated. (Just a pretty normal part of ecological data.)
+
+```{r}
+
+mod <- SpatialPointsDataFrame(ticks[,3:4],data.frame(ticks[,1]))
+names(mod@data) <- 'Presence'
+# Rasterizing makes unique points to the grid cell
+tmp=rasterize(mod, covs[[1]], field="Presence", fun="min")
+pts.sp1=rasterToPoints(tmp, fun=function(x){x>0})
+nrow(pts.sp1)
+
+pres.cov <- raster::extract(covs, pts.sp1[,1:2])
+head(pres.cov)
+
+```
+
+Next, let's generate an equal number of pseudoabsences around Africa to the number of presences we have. BARTs are like BRTs in that they are sensitive to assumed prevalence, if not even more so than BRTs; I strongly suggest using an equal number of presences and absences in your training data. You can experiment with the demo data by changing "nrow(ticks)" to "5000" below if you want to see the model overfit. 
+
+```{r}
+#Generate the data
+absence <- randomPoints(covs,nrow(ticks)) 
+abs.cov <- raster::extract(covs, absence)
+
+#Code the response
+pres.cov <- data.frame(pres.cov); pres.cov$tick <- 1
+abs.cov <- data.frame(abs.cov); abs.cov$tick <- 0
+
+# And one to bind them
+all.cov <- rbind(pres.cov, abs.cov)
+head(all.cov)
+
+# Let's just clean it up a little bit
+all.cov <- all.cov[complete.cases(all.cov),]
+```
+
+Now we have a dataset ready to model. 
+
+## Running models with dbarts
+
+We could try something really simple on defaults, right out the gate. The _bart_ function in _dbarts_ can just be run on defaults:
+
+```{r}
+first.model <- bart(all.cov[,1:11], all.cov[,'tick'], keeptrees=TRUE)
+```
+
+That's well and good, but dbarts doesn't have great tools to evaluate what the models do, or how they're working as predictive tools. Plus, we can't see the spatial prediction, which makes it hard to know if it's even looking plausible. One quick trick is to use the _bart.auc_ function in _embarcadero_, which uses the _dbarts_ model object (or an _embarcadero_ model object) and the vector of true data.
+
+```{r}
+bart.auc(first.model, all.cov[,'tick'])
+```
+
+A high AUC value indicates our model performs well. The AUC function also returns an optimal threshold that maximizes the true skill statistic (TSS), and the sensitivity/specificity of the model at that cutoff (alpha).
+
+What do the predictions look like? To make a predicted raster, we have to use _embarcadero_'s wrapper for the native _predict_ function in _dbarts_. 
+
+
+```{r, fig.fullwidth=TRUE}
+
+pred.prelim <- predict.dbart.raster(model = first.model,
+                                    inputstack = cov.big)
+plot(pred.prelim)
+
+points(SpatialPoints(ticks[,c('Longitude.X','Latitude.Y')]), 
+        pch=16, cex=0.2)
+
+```
+
+This model seems okay. We're getting predictions in places we don't have any records, like North Africa. That could be good if we think that's suitable climatic space (and if you know Hyalomma, you know there's definitely some species there, though posibly not truncatum), but with much of the inhabited area not being predicted, let's revisit that later.
+
+## Variable Selection
+
+Next, let's try some automated variable selection. There's a few different component pieces that do this in _embarcadero_.
+
+First, let's look at the variable contributions in the existing model:
+
+```{r}
+varimp(model=first.model, 
+       names=names(covs), 
+       plots = TRUE)
+```
+
+This tells us roughly how the variables contribute so far, but it doesn't tell us who to eliminate first - we don't want to eliminate based on a single run.
+
+Previously, it's been suggested that the best variable diagnostic for BART is to run models with progressively smaller numbers of trees - and as you get down to 10 or 20 trees per model, the contributions of bad or irrelevant variables will drop out. This is because like most CART methods, BART has the ability to overfit on variables with low information content. 
+
+What _varimp.plot_ does is run variable importance for hundreds of models at different tree levels. Let's say 10 models per combination is enough. This will print each level of models it's run, and then it will make a plot that shows us variable importance across runs.
+
+```{r}
+varimp.plot(x.data=all.cov[,1:11], 
+            y.data=all.cov[,'tick'],
+            iter=100)
+```
+
+Out of all the variables, "crop" seems to be especially undesirable as a predictor. A few other variables seem like they might not be helping the model either, but we probably need a systematic way to deal with that.
+
+Automated stepwise reduction isn't the best way to do things in machine learning, but it's consistent over a high number of iterations, and is the current stopgap in the package. _variable.step_ will automate the process, starting with the full feature set, fitting _iter_ models with _n.trees_ each (use a small value - 10 or 20), and reducing stepwise based on the variable with the lowest importance each iteration. Then, it'll make a recommendation for a feature set based on root mean square error (RMSE). That's not perfect, and you can take or leave it as an approach. 
+
+Expert knowledge about variable importance and cautious inclusion will _always_ be better, epistemologically, than automated stepwise feature set reduction.
+
+```{r}
+
+varlist <- variable.step(x.data=all.cov[,1:11],
+              y.data=all.cov[,'tick'],
+              n.trees=10)
+```
+
+Our stepwise reduction only cuts crop - that's great. Normally this step cuts a few variables - it's probably a good sign about our _a priori_ variable selection that not much got dropped. Let's run a "good" model with that predictor cut.
+
+```{r}
+
+# Rerun the model
+good.model <- bart(all.cov[,varlist], all.cov[,'tick'], keeptrees=TRUE)
+# Check the AUC
+bart.auc(good.model, all.cov[,'tick'])
+# Do the spatial prediction
+hytr.layer <- predict.dbart.raster(model = good.model,
+                                    inputstack = covs[[varlist]])
+# How's it look?
+plot(hytr.layer)
+
+```
+
+# Mapping CCHF
+
+Alright. Now let's get back to business by building the CCHF map. We're going to use the same predictors as we used for _H. truncatum_ plus the suitability layer.
+
+## Running the CCHF model
+
+This time, let's just do the variable selection up front. And instead of running each piece separately, we can run a full-service model using _bart.var_ from _embarcadero_. That runs each of the steps we did above, including running the reduced-feature model, and returns a list object with a model and a variable set.
+
+```{r}
+
+# Update those pesky covariates
+covs <- stack(covs, hytr.layer)
+names(covs)[12]='hytr'
+
+# Read in the data
+cchf <- read.csv('~/Github/embarcadero/vignettes/CCHF_1953_2012_Messina.csv')
+head(cchf)
+nrow(cchf)
+
+# Spatial thinning checks; this also limits it to African points
+cchf <- cchf[,c('LONGITUDE','LATITUDE')]; cchf$Presence = 1
+cchf <- SpatialPointsDataFrame(cchf[,1:2],data.frame(Presence=cchf[,3]))
+tmp=rasterize(cchf, covs[[1]], field="Presence", fun="min")
+pts.sp1=rasterToPoints(tmp, fun=function(x){x>0})
+nrow(pts.sp1)
+
+# Extract presence values
+pres.cov <- raster::extract(covs, pts.sp1[,1:2])
+pres.cov <- na.omit(pres.cov)
+head(pres.cov)
+
+#Generate pseudoabsences
+absence <- randomPoints(covs,nrow(pres.cov)) 
+abs.cov <- raster::extract(covs, absence)
+
+#Code the response
+pres.cov <- data.frame(pres.cov); pres.cov$cchf <- 1
+abs.cov <- data.frame(abs.cov); abs.cov$cchf <- 0
+
+# And one to bind them
+all.cov <- rbind(pres.cov, abs.cov)
+all.cov <- all.cov[complete.cases(all.cov),]; nrow(all.cov)
+head(all.cov)
+
+# This part automates the variable selection and returns the model
+cchf.model <- bart.var(xdata=all.cov[,1:12], 
+                       ydata=all.cov[,'cchf'], 
+                       iter.step = 100, 
+                       tree.step = 10,
+                       iter.plot = 100)
+
+# Do the spatial prediction
+cchf.map <- predict.dbart.raster(model = cchf.model$Model.object,
+                                    inputstack = covs[[cchf.model$Variables]])
+# How's it look?
+plot(hytr.layer)
+plot(cchf.map)
+```
+
+OK. Nice model! Let's see what we can do to unpack it.
+
+## Analytics
+
+Let's look at the variable contributions:
+
+```{r}
+varimp(cchf.model$Model.object, cchf.model$Variables, plots=TRUE)
+```
+
+NDVI amplitude and the tick vector come out on top; bio1 and mean NDVI also contribute a lot. Let's look at the response functions a little bit. First, let's look at the partial dependence plots for a couple individual variables:
+
+```{r}
+# Let's do one variable
+p <- pdbart(cchf.model$Model.object, xind=hytr, pl=TRUE)
+# Let's do em all
+p <- pdbart(cchf.model$Model.object, pl=TRUE)
+```
+
+Some of these patterns are pretty clear - suitability declines above 20 degrees C, and increases with the probability of the tick. NDVI is a little less intuitive to the human mind, but a great feature of BART is that we can pretty easily do two-dimensional partial dependence plots, and we can pretty easily visualize the optimum:
+
+#```{r}
+#p <- pd2bart(cchf.model$Model.object, xind=c('ndvi.mean', 'ndvi.amp'), #pl=TRUE)
+#```
+# Come back to this when you know which variables make it in
+
+One downside of the BART plots is that they just spit out a lot of text. That's why the objects are being saved to "p".
+
+
