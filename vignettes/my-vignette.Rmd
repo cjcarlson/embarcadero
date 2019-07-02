@@ -37,7 +37,7 @@ There's also just going to be some general comments on the process of using BART
 library(embarcadero, quietly = TRUE)
 library(velox)
 
-set.seed(123)
+set.seed(12345)
 ```
 
 Doors are closing; please stand clear of the doors.
@@ -292,9 +292,10 @@ p <- pdbart(cchf.model$Model.object, pl=TRUE)
 
 Some of these patterns are pretty clear - suitability declines above 20 degrees C, and increases with the probability of the tick. NDVI is a little less intuitive to the human mind, but a great feature of BART is that we can pretty easily do two-dimensional partial dependence plots, and we can pretty easily visualize the optimum:
 
-```{r}
-p <- pd2bart(cchf.model$Model.object, xind=c('ndvi.mean', 'ndvi.amp'), pl=TRUE)
-```
+#```{r}
+#p <- pd2bart(cchf.model$Model.object, xind=c('ndvi.mean', 'ndvi.amp'), #pl=TRUE)
+#```
+# Come back to this when you know which variables make it in
 
 One downside of the BART plots is that they just spit out a lot of text. That's why the objects are being saved to "p".
 
