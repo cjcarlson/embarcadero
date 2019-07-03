@@ -2,8 +2,8 @@ Package: embarcadero
 Title: Species distribution models with BART
 Version: 1.0.0.0001
 Authors@R: person("Colin", "Carlson", email = "cjc322@georgetown.edu", role = c("aut", "cre"))
-Description: Bababooey.
-License: What license is it under?
+Description: Species distribution models with BART
+License: CC0
 Encoding: UTF-8
 LazyData: true
 Depends: raster, dbarts, Metrics, tidyverse, dismo, ROCR
