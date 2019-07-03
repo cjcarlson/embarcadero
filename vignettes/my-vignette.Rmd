@@ -1,5 +1,5 @@
 ---
-title: "Mapping \textit{Hyalomma} and CCHF in Africa"
+title: "Mapping _Hyalomma_ and Crimean-Congo Haemorrhagic Fever in Africa with BARTs"
 output: pdf_document
 vignette: >
   %\VignetteIndexEntry{my-vignette}
@@ -33,8 +33,8 @@ Most of the core functionality of \texttt{embarcadero} is actually a wrapper for
 There's also just going to be some general comments on the process of using BARTs, the challenges to working with them, and some things that are hopefully coming next.
 
 
-```{r setup}
-library(embarcadero, quietly = TRUE)
+```{r setup, echo=FALSE}
+library(embarcadero)
 library(velox)
 
 set.seed(12345)
@@ -76,13 +76,12 @@ cov.big <- covs
     if (i == 1) { cov.big <- stack(vx$as.RasterLayer())
     } else { cov.big <- stack(cov.big,vx$as.RasterLayer())
     }
-    print(i)
   }
 
 names(cov.big) <- names(covs)
 ```
 
-Hyalomma truncatum occurrence data is taken from the Cumming tick dataset
+_Hyalomma truncatum_ occurrence data is taken from the Cumming tick dataset
 
 ```{r}
 ticks <- read.csv('~/Github/embarcadero/vignettes/Hytr.csv')
@@ -129,13 +128,13 @@ Now we have a dataset ready to model.
 
 ## Running models with dbarts
 
-We could try something really simple on defaults, right out the gate. The _bart_ function in _dbarts_ can just be run on defaults:
+We could try something really simple on defaults, right out the gate. The \texttt{bart} function in \texttt{dbarts} can just be run on defaults:
 
 ```{r}
 first.model <- bart(all.cov[,1:11], all.cov[,'tick'], keeptrees=TRUE)
 ```
 
-That's well and good, but dbarts doesn't have great tools to evaluate what the models do, or how they're working as predictive tools. Plus, we can't see the spatial prediction, which makes it hard to know if it's even looking plausible. One quick trick is to use the _bart.auc_ function in _embarcadero_, which uses the _dbarts_ model object (or an _embarcadero_ model object) and the vector of true data.
+That's well and good, but dbarts doesn't have great tools to evaluate what the models do, or how they're working as predictive tools. Plus, we can't see the spatial prediction, which makes it hard to know if it's even looking plausible. One quick trick is to use the \texttt{bart.auc} function in \texttt{embarcadero}, which uses the \texttt{dbarts} model object (or an \texttt{embarcadero} model object) and the vector of true data.
 
 ```{r}
 bart.auc(first.model, all.cov[,'tick'])
@@ -143,14 +142,14 @@ bart.auc(first.model, all.cov[,'tick'])
 
 A high AUC value indicates our model performs well. The AUC function also returns an optimal threshold that maximizes the true skill statistic (TSS), and the sensitivity/specificity of the model at that cutoff (alpha).
 
-What do the predictions look like? To make a predicted raster, we have to use _embarcadero_'s wrapper for the native _predict_ function in _dbarts_. 
+What do the predictions look like? To make a predicted raster, we have to use \texttt{embarcadero}'s wrapper for the native \texttt{predict} function in \texttt{dbarts}. 
 
 
 ```{r, fig.fullwidth=TRUE}
 
 pred.prelim <- predict.dbart.raster(model = first.model,
                                     inputstack = cov.big)
-plot(pred.prelim)
+plot(pred.prelim, main='Hyalomma truncatum')
 
 points(SpatialPoints(ticks[,c('Longitude.X','Latitude.Y')]), 
         pch=16, cex=0.2)
@@ -161,7 +160,7 @@ This model seems okay. We're getting predictions in places we don't have any rec
 
 ## Variable Selection
 
-Next, let's try some automated variable selection. There's a few different component pieces that do this in _embarcadero_.
+Next, let's try some automated variable selection. There's a few different component pieces that do this in \texttt{embarcadero}.
 
 First, let's look at the variable contributions in the existing model:
 
@@ -175,7 +174,7 @@ This tells us roughly how the variables contribute so far, but it doesn't tell u
 
 Previously, it's been suggested that the best variable diagnostic for BART is to run models with progressively smaller numbers of trees - and as you get down to 10 or 20 trees per model, the contributions of bad or irrelevant variables will drop out. This is because like most CART methods, BART has the ability to overfit on variables with low information content. 
 
-What _varimp.plot_ does is run variable importance for hundreds of models at different tree levels. Let's say 10 models per combination is enough. This will print each level of models it's run, and then it will make a plot that shows us variable importance across runs.
+What \texttt{varimp.plot} does is run variable importance for hundreds of models at different tree levels. Let's say 10 models per combination is enough. This will print each level of models it's run, and then it will make a plot that shows us variable importance across runs.
 
 ```{r}
 varimp.plot(x.data=all.cov[,1:11], 
@@ -185,9 +184,9 @@ varimp.plot(x.data=all.cov[,1:11],
 
 Out of all the variables, "crop" seems to be especially undesirable as a predictor. A few other variables seem like they might not be helping the model either, but we probably need a systematic way to deal with that.
 
-Automated stepwise reduction isn't the best way to do things in machine learning, but it's consistent over a high number of iterations, and is the current stopgap in the package. _variable.step_ will automate the process, starting with the full feature set, fitting _iter_ models with _n.trees_ each (use a small value - 10 or 20), and reducing stepwise based on the variable with the lowest importance each iteration. Then, it'll make a recommendation for a feature set based on root mean square error (RMSE). That's not perfect, and you can take or leave it as an approach. 
+Automated stepwise reduction isn't the best way to do things in machine learning, but it's consistent over a high number of iterations, and is the current stopgap in the package. \texttt{variable.step} will automate the process, starting with the full feature set, fitting \texttt{iter} models with \texttt{n.trees} each (use a small value - 10 or 20), and reducing stepwise based on the variable with the lowest importance each iteration. Then, it'll make a recommendation for a feature set based on root mean square error (RMSE). 
 
-Expert knowledge about variable importance and cautious inclusion will _always_ be better, epistemologically, than automated stepwise feature set reduction.
+That's not perfect, and you can take or leave it as an approach. Expert knowledge about variable importance and cautious inclusion will _always_ be better, epistemologically, than automated stepwise feature set reduction.
 
 ```{r}
 
@@ -196,7 +195,7 @@ varlist <- variable.step(x.data=all.cov[,1:11],
               n.trees=10)
 ```
 
-Our stepwise reduction only cuts crop - that's great. Normally this step cuts a few variables - it's probably a good sign about our _a priori_ variable selection that not much got dropped. Let's run a "good" model with that predictor cut.
+Normally this step cuts a few variables - it's probably a good sign about our _a priori_ variable selection that not much got dropped. Let's run a "good" model with that predictor cut.
 
 ```{r}
 
@@ -208,7 +207,6 @@ bart.auc(good.model, all.cov[,'tick'])
 hytr.layer <- predict.dbart.raster(model = good.model,
                                     inputstack = covs[[varlist]])
 # How's it look?
-plot(hytr.layer)
 
 ```
 
@@ -218,7 +216,7 @@ Alright. Now let's get back to business by building the CCHF map. We're going to
 
 ## Running the CCHF model
 
-This time, let's just do the variable selection up front. And instead of running each piece separately, we can run a full-service model using _bart.var_ from _embarcadero_. That runs each of the steps we did above, including running the reduced-feature model, and returns a list object with a model and a variable set.
+This time, let's just do the variable selection up front. And instead of running each piece separately, we can run a full-service model using \texttt{bart.var} from \texttt{embarcadero}. That runs each of the steps we did above, including running the reduced-feature model, and returns a list object with a model and a variable set.
 
 ```{r}
 
@@ -267,11 +265,40 @@ cchf.model <- bart.var(xdata=all.cov[,1:12],
 cchf.map <- predict.dbart.raster(model = cchf.model$Model.object,
                                     inputstack = covs[[cchf.model$Variables]])
 # How's it look?
-plot(hytr.layer)
-plot(cchf.map)
+plot(cchf.map, main='CCHF')
 ```
 
 OK. Nice model! Let's see what we can do to unpack it.
+
+First, let's compare it against the tick map.
+
+```{r}
+par(mfrow=c(1,2))
+plot(cchf.map, main='CCHF')
+```
+
+Our model seems to be different from the previous one (published by Messina _et al., using this dataset which they generously provide online) in three major ways. 
+
+First, using the tick vector has increased the amount of predicted suitable area in South Africa, Namibia, Botswana, and Zimbabwe. That makes sense, overall--if there are vectors present, CCHF seems plausible.
+
+Second, the model predicts the area in coastal Cameroon, Gabon, and Equatorial Guinea that we know has some CCHF records but has previously been underpredicted. Weirdly, we don't have good evidence _Hyalomma truncatum_ is there. So, the model is doing well, but the ecology is still unclear.
+
+Finally, the northern coast of Africa is predicted to be highly suitable. There's plenty of _Hyalomma_ species up there, though not _H. truncatum_ as far as our data suggests. It's possible we should think more about the possibility of CCHF in Morocco and Algeria.
+
+## Visualizing uncertainty
+
+One of the best things about BARTs is that by default the outputs are posteriors, with built-in uncertainty. That's the great thing about Bayesian statistics!
+
+This is going to be, by default, the slowest part of this process. 
+
+```{r}
+
+cchf.map <- predict.dbart.raster(model = cchf.model$Model.object,
+                                 inputstack = covs[[cchf.model$Variables]],
+                                 ci=TRUE)
+```
+
+When you run this argument with "ci=TRUE" it samples a 5\% and 95\% draw to give you a 90\% credible interval on that posterior. The difference between them--the posterior width in a given pixel--is a pretty good spatial measure of uncertainty. This is the main level of uncertainty people tend to report when they do studies like this, so I'm not feeling a lot of pressure to add more functionality here. But if people want it, I'll add something to pull arbitrary levels from the posterior. (It's also worth noting that the credible intervals in the partial dependence plots come from a similar approach, though I am not in fact completely sure the bounds are a 95\% CI.)
 
 ## Analytics
 
@@ -286,16 +313,15 @@ NDVI amplitude and the tick vector come out on top; bio1 and mean NDVI also cont
 ```{r}
 # Let's do one variable
 p <- pdbart(cchf.model$Model.object, xind=hytr, pl=TRUE)
-# Let's do em all
-p <- pdbart(cchf.model$Model.object, pl=TRUE)
+# Let's do a couple at once
+p <- pdbart(cchf.model$Model.object, xind=c('bio12','bio13'), pl=TRUE)
 ```
 
 Some of these patterns are pretty clear - suitability declines above 20 degrees C, and increases with the probability of the tick. NDVI is a little less intuitive to the human mind, but a great feature of BART is that we can pretty easily do two-dimensional partial dependence plots, and we can pretty easily visualize the optimum:
 
-#```{r}
-#p <- pd2bart(cchf.model$Model.object, xind=c('ndvi.mean', 'ndvi.amp'), #pl=TRUE)
-#```
-# Come back to this when you know which variables make it in
+```{r}
+p <- pd2bart(cchf.model$Model.object, xind=c('ndvi.mean', 'ndvi.amp'), pl=TRUE)
+```
 
 One downside of the BART plots is that they just spit out a lot of text. That's why the objects are being saved to "p".
 

@@ -6,8 +6,8 @@ knitr::opts_chunk$set(
 
 suppressMessages(library(tidyverse))
 
-## ----setup---------------------------------------------------------------
-library(embarcadero, quietly = TRUE)
+## ----setup, echo=FALSE---------------------------------------------------
+library(embarcadero)
 library(velox)
 
 set.seed(12345)
@@ -24,7 +24,6 @@ cov.big <- covs
     if (i == 1) { cov.big <- stack(vx$as.RasterLayer())
     } else { cov.big <- stack(cov.big,vx$as.RasterLayer())
     }
-    print(i)
   }
 
 names(cov.big) <- names(covs)
@@ -73,7 +72,7 @@ bart.auc(first.model, all.cov[,'tick'])
 
 pred.prelim <- predict.dbart.raster(model = first.model,
                                     inputstack = cov.big)
-plot(pred.prelim)
+plot(pred.prelim, main='Hyalomma truncatum')
 
 points(SpatialPoints(ticks[,c('Longitude.X','Latitude.Y')]), 
         pch=16, cex=0.2)
@@ -105,7 +104,7 @@ bart.auc(good.model, all.cov[,'tick'])
 hytr.layer <- predict.dbart.raster(model = good.model,
                                     inputstack = covs[[varlist]])
 # How's it look?
-plot(hytr.layer)
+plot(hytr.layer, 'Hyalomma truncatum')
 
 
 ## ------------------------------------------------------------------------
@@ -155,8 +154,19 @@ cchf.model <- bart.var(xdata=all.cov[,1:12],
 cchf.map <- predict.dbart.raster(model = cchf.model$Model.object,
                                     inputstack = covs[[cchf.model$Variables]])
 # How's it look?
-plot(hytr.layer)
-plot(cchf.map)
+plot(hytr.layer, 'Hyalomma truncatum')
+plot(cchf.map, main='CCHF')
+
+## ------------------------------------------------------------------------
+par(mfrow=c(1,2))
+plot(hytr.layer, 'H. truncatum')
+plot(cchf.map, main='CCHF')
+
+## ------------------------------------------------------------------------
+
+cchf.map <- predict.dbart.raster(model = cchf.model$Model.object,
+                                 inputstack = covs[[cchf.model$Variables]],
+                                 ci=TRUE)
 
 ## ------------------------------------------------------------------------
 varimp(cchf.model$Model.object, cchf.model$Variables, plots=TRUE)
@@ -164,6 +174,9 @@ varimp(cchf.model$Model.object, cchf.model$Variables, plots=TRUE)
 ## ------------------------------------------------------------------------
 # Let's do one variable
 p <- pdbart(cchf.model$Model.object, xind=hytr, pl=TRUE)
-# Let's do em all
-p <- pdbart(cchf.model$Model.object, pl=TRUE)
+# Let's do a couple at once
+p <- pdbart(cchf.model$Model.object, xind=c('bio12','bio13'), pl=TRUE)
+
+## ------------------------------------------------------------------------
+p <- pd2bart(cchf.model$Model.object, xind=c('ndvi.mean', 'ndvi.amp'), pl=TRUE)
 

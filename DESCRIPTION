@@ -11,6 +11,6 @@ RoxygenNote: 6.1.1
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2019-07-02 05:42:26 UTC; cjcar
+Packaged: 2019-07-03 01:45:09 UTC; cjcar
 Author: Colin Carlson [aut, cre]
 Maintainer: Colin Carlson <cjc322@georgetown.edu>
