@@ -104,7 +104,7 @@ bart.auc(good.model, all.cov[,'tick'])
 hytr.layer <- predict.dbart.raster(model = good.model,
                                     inputstack = covs[[varlist]])
 # How's it look?
-plot(hytr.layer, 'Hyalomma truncatum')
+plot(hytr.layer, main='Hyalomma truncatum')
 
 
 ## ------------------------------------------------------------------------
@@ -154,12 +154,11 @@ cchf.model <- bart.var(xdata=all.cov[,1:12],
 cchf.map <- predict.dbart.raster(model = cchf.model$Model.object,
                                     inputstack = covs[[cchf.model$Variables]])
 # How's it look?
-plot(hytr.layer, 'Hyalomma truncatum')
 plot(cchf.map, main='CCHF')
 
 ## ------------------------------------------------------------------------
 par(mfrow=c(1,2))
-plot(hytr.layer, 'H. truncatum')
+plot(hytr.layer, main='H. truncatum')
 plot(cchf.map, main='CCHF')
 
 ## ------------------------------------------------------------------------
