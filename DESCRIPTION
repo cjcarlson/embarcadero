@@ -1,6 +1,6 @@
 Package: embarcadero
 Title: Species distribution models with BART
-Version: 0.0.0.9000
+Version: 1.0.0.0001
 Authors@R: person("Colin", "Carlson", email = "cjc322@georgetown.edu", role = c("aut", "cre"))
 Description: Bababooey.
 License: What license is it under?

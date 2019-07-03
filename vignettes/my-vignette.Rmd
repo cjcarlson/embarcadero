@@ -207,7 +207,7 @@ bart.auc(good.model, all.cov[,'tick'])
 hytr.layer <- predict.dbart.raster(model = good.model,
                                     inputstack = covs[[varlist]])
 # How's it look?
-plot(hytr.layer, 'Hyalomma truncatum')
+plot(hytr.layer, main='Hyalomma truncatum')
 
 ```
 
@@ -266,7 +266,6 @@ cchf.model <- bart.var(xdata=all.cov[,1:12],
 cchf.map <- predict.dbart.raster(model = cchf.model$Model.object,
                                     inputstack = covs[[cchf.model$Variables]])
 # How's it look?
-plot(hytr.layer, 'Hyalomma truncatum')
 plot(cchf.map, main='CCHF')
 ```
 
@@ -276,11 +275,11 @@ First, let's compare it against the tick map.
 
 ```{r}
 par(mfrow=c(1,2))
-plot(hytr.layer, 'H. truncatum')
+plot(hytr.layer, main='H. truncatum')
 plot(cchf.map, main='CCHF')
 ```
 
-Our model seems to be different from the previous one (published by Messina _et al., using this dataset which they generously provide online) in three major ways. 
+Our model seems to be different from the previous one (published by Messina _et al._, using this dataset which they generously provide online) in three major ways. 
 
 First, using the tick vector has increased the amount of predicted suitable area in South Africa, Namibia, Botswana, and Zimbabwe. That makes sense, overall--if there are vectors present, CCHF seems plausible.
 
@@ -305,13 +304,13 @@ When you run this argument with "ci=TRUE" it samples a 5\% and 95\% draw to give
 
 ## Analytics
 
-Let's look at the variable contributions:
+Finally, let's unpack some of what's under the hood in the model. First let's look at the variable contributions:
 
 ```{r}
 varimp(cchf.model$Model.object, cchf.model$Variables, plots=TRUE)
 ```
 
-NDVI amplitude and the tick vector come out on top; bio1 and mean NDVI also contribute a lot. Let's look at the response functions a little bit. First, let's look at the partial dependence plots for a couple individual variables:
+NDVI amplitude and the tick vector come out on top; bio1 and mean NDVI also contribute a lot. Let's look at the response functions a little bit. First, let's look at the partial dependence plots for a couple individual variables. 
 
 ```{r}
 # Let's do one variable
@@ -320,12 +319,22 @@ p <- pdbart(cchf.model$Model.object, xind=hytr, pl=TRUE)
 p <- pdbart(cchf.model$Model.object, xind=c('bio12','bio13'), pl=TRUE)
 ```
 
+(One downside of the BART plots is that they just spit out a lot of text. That's why the objects are being saved to "p".)
+
 Some of these patterns are pretty clear - suitability declines above 20 degrees C, and increases with the probability of the tick. NDVI is a little less intuitive to the human mind, but a great feature of BART is that we can pretty easily do two-dimensional partial dependence plots, and we can pretty easily visualize the optimum:
 
 ```{r}
 p <- pd2bart(cchf.model$Model.object, xind=c('ndvi.mean', 'ndvi.amp'), pl=TRUE)
 ```
 
-One downside of the BART plots is that they just spit out a lot of text. That's why the objects are being saved to "p".
+This is probably my favorite feature of \texttt{dbarts} - these plots are a really nice way to visualize the Hutchinsonian niche sort of like how NicheA does, but within the familiar framework of classification trees. Plus it's not just a cross-product of the individual partials - the BART framework allows for interactions and sometimes you'll see them show up in these plots.
 
+# Finally...
 
+That's all the functionality I've outlined so far. I'll keep building out the visualizations to make them more consistent and publication-ready for people, and am also eager to work with other people on this.
+
+Finally, a big thanks to Jane Messina _et al._ for sharing their CCHF data, and to Graeme Cumming for tick data:
+
+* Cumming, G. S. "Host preference in African ticks (Acari: Ixodida): a quantitative data set." _Bulletin of Entomological Research_ 88.4 (1998): 379-406.
+* Messina, Jane P., _et al._ "A global compendium of human Crimean-Congo haemorrhagic fever virus occurrence." _Scientific Data_ 2 (2015): 150016.
+* Messina, Jane P., _et al._ "The global distribution of Crimean-Congo hemorrhagic fever." _Transactions of the Royal Society of Tropical Medicine and Hygiene_ 109.8 (2015): 503-513.
