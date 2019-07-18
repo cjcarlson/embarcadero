@@ -20,9 +20,9 @@ This package is basically a wrapper around 'dbarts'  with a few tools
 - stepwise variable elimination
 - AUC calculation 
 - a 95% credible interval from the posterior distribution
+- automatic Nice Plots for partials, including multiple ways to visualize posterior draws
 
 It's aggressively incomplete, with more to come hopefully. That would ideally include:
-- automatic Nice Plots for partials
 - parallelized prediction to Make More Faster
 
 __Can I help__?
