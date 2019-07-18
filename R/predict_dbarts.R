@@ -10,7 +10,7 @@
 #' @export
 #'
 
-predict.dbart.raster <- function(model, inputstack, ci=FALSE) {
+predict.dbart.raster <- function(model, inputstack, ci=FALSE, plots=FALSE) {
 
   input.matrix <- as.matrix(getValues(inputstack))
   output = predict(model,
@@ -43,16 +43,17 @@ predict.dbart.raster <- function(model, inputstack, ci=FALSE) {
                          ymn=ymin(inputstack[[1]]), ymx=ymax(inputstack[[1]]),
                          crs=inputstack[[1]]@crs) + inputstack[[1]]*0
 
-
+    if(plots==TRUE){
     par(mfrow=c(2,2))
     plot(output.r,main="Mean")
     plot(output.r.U-output.r.L,main="95% CI range")
     plot(output.r.L,main='Lower 95% CI')
     plot(output.r.U,main='Upper 95% CI')
+    }
 
     return(list(mean=output.r, upper.ci=output.r.U, lower.ci=output.r.L))
 
-  } else { plot(output.r); return(output.r) }
+  } else { if(plots==TRUE){plot(output.r)}; return(output.r) }
 
 
 }

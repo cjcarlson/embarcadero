@@ -4,7 +4,7 @@
 \alias{predict.dbart.raster}
 \title{Spatial prediction using dbarts}
 \usage{
-predict.dbart.raster(model, inputstack, ci = FALSE)
+predict.dbart.raster(model, inputstack, ci = FALSE, plots = FALSE)
 }
 \arguments{
 \item{model}{model object from dbarts package}
