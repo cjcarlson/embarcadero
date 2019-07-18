@@ -27,16 +27,28 @@
 #' bartFit <- bart(y ~ rob + hugh + ed, df,
 #'                keepevery = 10, ntree = 100, keeptrees = TRUE)
 #'
-#' partial(bartFit, x.vars=c('hugh'), equal=TRUE, smooth=10, trace=TRUE, ci=TRUE)
-#' partial(bartFit, x.vars=c('rob'), equal=TRUE, smooth=10, trace=FALSE, ci=TRUE)
-#' partial(bartFit, x.vars=c('ed'), equal=TRUE, smooth=10, trace=TRUE, ci=FALSE)
+#' partial(bartFit, x.vars='hugh', equal=TRUE, smooth=10, trace=TRUE, ci=TRUE)
+#' partial(bartFit, x.vars='rob', equal=TRUE, smooth=10, trace=FALSE, ci=TRUE)
+#' partial(bartFit, x.vars='ed', equal=TRUE, smooth=10, trace=TRUE, ci=FALSE)
+#' partial(bartFit, equal=TRUE, smooth=10, trace=FALSE, ci=TRUE, panel=TRUE)
 #'
 #' @export
 #'
 #'
 
 partial <- function(model, x.vars=NULL, equal=FALSE, smooth=1,
-                    posterior=NULL, ci=TRUE, trace=TRUE) {
+                    posterior=NULL, ci=TRUE, trace=TRUE,
+                    panels=FALSE) {
+  
+  # A couple errors in case I'm Idiot
+  
+  if(smooth>10) {
+    warning("You have chosen way, way too much smoothing... poorly")
+  }
+  
+  if(!is.null(x.vars) && length(x.vars)==1 && panels==TRUE) {
+    stop("Hey bud, you can't do several panels on only one variable!")
+  }
   
 # This is for something else ultimately: attr(bartFit$fit$data@x, "term.labels")
 # This is where equal happens
@@ -59,7 +71,9 @@ if (is.null(x.vars)) { raw <- bartFit$fit$data@x} else ( raw <- bartFit$fit$data
  
   
 # This is the wrapper itself
-  
+
+plots <- list()  
+
 for (i in 1:length(pd$fd)) {
   
   q50 <- apply(pd$fd[[i]],2,median)
@@ -104,8 +118,11 @@ for (i in 1:length(pd$fd)) {
   }
   
   g <- g + geom_line(size=1.25)
-  
-  print(g)
+  plots[[i]] <- g
+  if(panels==FALSE) {print(g)}
 
 }
+  
+if(panels==TRUE) {print(cowplot::plot_grid(plotlist=plots))}
+  
 }
