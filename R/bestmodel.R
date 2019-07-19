@@ -23,7 +23,7 @@ bart.var <- function(xdata, ydata,
   varimp.plot(xdata, ydata, iter=iter.plot)
   vs <- variable.step(xdata, ydata, n.trees=tree.step, iter=iter.step)
   invisible(best.model <- bart(xdata[,vs], ydata, keeptrees=TRUE))
-  varimp(best.model, names=vs, plots=TRUE)
+  varimp(best.model, plots=TRUE)
   
   
   pred.p <- colMeans(pnorm(best.model$yhat.train))[ydata==1]
@@ -32,6 +32,5 @@ bart.var <- function(xdata, ydata,
                 a=pred.a)
   plot(e, 'ROC')
   
-  invisible(list(Variables=vs,
-                 Model.object=best.model))
+  invisible(best.model)
 }

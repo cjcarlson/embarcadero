@@ -10,8 +10,16 @@
 #' @export
 #'
 
-predict.dbart.raster <- function(model, inputstack, ci=FALSE, plots=FALSE) {
+bart.map <- function(model, inputstack, ci=FALSE, plots=FALSE) {
 
+  xnames <- attr(bartFit$fit$data@x, "term.labels")
+  
+  if(xnames %in% names(inputstack)) {
+    inputstack <- inputstack[[xnames]]
+  } else {
+    stop("Variable names of RasterStack don't ")
+  }
+  
   input.matrix <- as.matrix(getValues(inputstack))
   output = predict(model,
                    input.matrix)

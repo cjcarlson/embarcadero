@@ -4,7 +4,7 @@
 \alias{partial}
 \title{Better, nicer, friendlier partials}
 \usage{
-partial(model, x.vars = NULL, equal = FALSE, smooth = 1, ci = TRUE,
+partial(model, x.vars = NULL, equal = TRUE, smooth = 1, ci = TRUE,
   trace = TRUE, transform = TRUE, panels = FALSE)
 }
 \arguments{

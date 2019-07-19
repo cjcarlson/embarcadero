@@ -13,8 +13,9 @@
 #'
 #'
 
-varimp <- function(model, names,plots=FALSE) {
+varimp <- function(model, plots=FALSE) {
 
+  names <- attr(model$fit$data@x, "term.labels")
   varimps <- colMeans(model$varcount/rowSums(model$varcount))
   var.df <- data.frame(names, varimps)
 

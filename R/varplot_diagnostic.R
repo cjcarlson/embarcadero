@@ -28,7 +28,7 @@ varimp.plot <- function(x.data, y.data, iter=50) {
     for(index in 1:iter) {
       quiet(model.j <- bart(x.data[,varnums], y.data, ntree = n.trees, keeptrees=TRUE))
 
-      vi.j <- varimp(model.j, varlist)
+      vi.j <- varimp(model.j)
       if(index==1) {
         vi.j.df <- vi.j
       } else {

@@ -4,14 +4,14 @@
 \alias{varimp}
 \title{Variable importance plot}
 \usage{
-varimp(model, names, plots = FALSE)
+varimp(model, plots = FALSE)
 }
 \arguments{
 \item{model}{The dbarts model object}
 
-\item{names}{The variable names (not conserved in dbarts necessarily)}
-
 \item{plots}{Turn this on for a nice variable contribution plot}
+
+\item{names}{The variable names (not conserved in dbarts necessarily)}
 }
 \description{
 Variable importance, as measured in the proportion of total branches used for a given variable.

@@ -9,16 +9,13 @@
 #' @export
 #'
 
-bart.auc <- function(model, true.vector) {
-
-  if(class(model)=='bart') {
-    pred <- prediction(colMeans(pnorm(model$yhat.train)), true.vector)
-    } else {
-    if (class(model)=='list') {
-    pred <- prediction(colMeans(pnorm(model$Model.object$yhat.train)), true.vector)
-    }}
-
-   print('AUC = ')
+bart.auc <- function(model) {
+ 
+  true.vector <- best.model$fit$data@y
+  
+  pred <- prediction(colMeans(pnorm(model$yhat.train)), true.vector)
+  
+  print('AUC = ')
   print(performance(pred,"auc")@y.values[[1]])
   plot(performance(pred, "tpr", "fpr"),main='Receiver operator curve')
   abline(0,1,col='red')

@@ -4,7 +4,7 @@
 \alias{bart.auc}
 \title{AUC for BART object}
 \usage{
-bart.auc(model, true.vector)
+bart.auc(model)
 }
 \arguments{
 \item{model}{Dude that's a model. It better be a freakin lBART model dude}
