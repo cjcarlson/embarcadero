@@ -4,8 +4,8 @@
 \alias{partial}
 \title{Better, nicer, friendlier partials}
 \usage{
-partial(model, x.vars = NULL, equal = FALSE, smooth = 1,
-  posterior = NULL, ci = TRUE, trace = TRUE, panels = FALSE)
+partial(model, x.vars = NULL, equal = FALSE, smooth = 1, ci = TRUE,
+  trace = TRUE, transform = TRUE, panels = FALSE)
 }
 \arguments{
 \item{model}{A dbarts model object}

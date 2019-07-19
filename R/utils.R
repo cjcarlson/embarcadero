@@ -1,3 +1,4 @@
+# @export
 
 theme_bluewhite <- function (base_size = 11, base_family = "") {
   theme_classic() %+replace%

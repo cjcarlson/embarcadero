@@ -40,8 +40,8 @@
 #'
 
 partial <- function(model, x.vars=NULL, equal=FALSE, smooth=1,
-                    posterior=NULL, ci=TRUE, trace=TRUE,
-                    panels=FALSE) {
+                    ci=TRUE, trace=TRUE,
+                    transform=TRUE, panels=FALSE) {
   
   # A couple errors in case I'm Idiot
   
@@ -56,7 +56,7 @@ partial <- function(model, x.vars=NULL, equal=FALSE, smooth=1,
 # This is for something else ultimately: attr(bartFit$fit$data@x, "term.labels")
 # This is where equal happens
   
-if (is.null(x.vars)) { raw <- bartFit$fit$data@x} else ( raw <- bartFit$fit$data@x[,x.vars])
+if (is.null(x.vars)) { raw <- model$fit$data@x} else ( raw <- model$fit$data@x[,x.vars])
   
   if(equal==TRUE) {
     if(!is.null(x.vars) && length(x.vars)==1) {
