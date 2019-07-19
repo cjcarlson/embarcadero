@@ -55,7 +55,8 @@ varimp.plot <- function(x.data, y.data, iter=50) {
     geom_line(aes(color=trees)) + geom_point(size=3) + theme_classic() +
     ylab("Relative contribution\n") + xlab("\nVariables dropped") +
     theme(axis.text = element_text(size=10),
-          axis.title = element_text(size=14,face="bold")); print(g1)
+          axis.title = element_text(size=14,face="bold"),
+          axis.text.x = element_text(angle = 45)); print(g1)
 
 
 }

@@ -26,6 +26,7 @@ varimp <- function(model, plots=FALSE) {
   if(plots==TRUE){
   g1 <- ggplot2::ggplot(var.df, aes(y=varimps, x=names)) +
     geom_bar(stat="identity", color="black") +
+    theme(axis.text.x = element_text(angle = 45)) + 
     ylab("Relative importance") + theme_bluewhite()
   print(g1)
   }
