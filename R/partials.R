@@ -41,7 +41,7 @@
 #'
 #'
 
-partial <- function(model, x.vars=NULL, equal=FALSE, smooth=1,
+partial <- function(model, x.vars=NULL, equal=TRUE, smooth=1,
                     ci=TRUE, trace=TRUE,
                     transform=TRUE, panels=FALSE) {
   
@@ -68,6 +68,15 @@ if (is.null(x.vars)) { raw <- model$fit$data@x} else ( raw <- model$fit$data@x[,
                          maxs = apply(raw, 2, max))
     }
     lev <- lapply(c(1:nrow(minmax)), function(i) {seq(minmax$mins[i], minmax$maxs[i], (minmax$maxs[i]-minmax$mins[i])/(10*smooth))})
+    
+    for(i in 1:length(lev)){
+      if(length(lev)==1) {  
+        if(length(unique(raw))==2) { lev[[i]] <- unique(raw) }
+      } else {
+        if(length(unique(raw[,i]))==2) { lev[[i]] <- unique(raw[,i])}
+      }
+    }
+    
     pd <- pdbart(model, xind = x.vars, levs = lev, pl=FALSE)
   } else {
     levq = c(0.05, seq(0.1, 0.9, 0.1/smooth), 0.95)
