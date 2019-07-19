@@ -25,17 +25,19 @@ Returns a nice plot
 I don't really like the partial visualizations in dbarts so I made some of my own, with a little more customization options.
 }
 \examples{
-f <- function(x) { return(0.5 * x[,1] + 2 * x[,2] * x[,3]) }
+f <- function(x) { return(0.5 * x[,1] + 2 * x[,2] * x[,3]) - 5*x[,4] }
 sigma <- 0.2
 n <- 100
 x <- matrix(2 * runif(n * 3) -1, ncol = 3)
-colnames(x) <- c('rob', 'hugh', 'ed')
+x <- data.frame(x)
+x[,4] <- rbinom(100, 1, 0.3)
+colnames(x) <- c('rob', 'hugh', 'ed', 'phil')
 Ey <- f(x)
 y  <- rnorm(n, Ey, sigma)
 df <- data.frame(y, x)
 set.seed(99)
 
-bartFit <- bart(y ~ rob + hugh + ed, df,
+bartFit <- bart(y ~ rob + hugh + ed + phil, df,
                keepevery = 10, ntree = 100, keeptrees = TRUE)
 
 partial(bartFit, x.vars='hugh', trace=TRUE, ci=TRUE)

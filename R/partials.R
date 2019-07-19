@@ -14,17 +14,19 @@
 #' @return Returns a nice plot
 #'
 #' @examples
-#' f <- function(x) { return(0.5 * x[,1] + 2 * x[,2] * x[,3]) }
+#' f <- function(x) { return(0.5 * x[,1] + 2 * x[,2] * x[,3]) - 5*x[,4] }
 #' sigma <- 0.2
 #' n <- 100
 #' x <- matrix(2 * runif(n * 3) -1, ncol = 3)
-#' colnames(x) <- c('rob', 'hugh', 'ed')
+#' x <- data.frame(x)
+#' x[,4] <- rbinom(100, 1, 0.3)
+#' colnames(x) <- c('rob', 'hugh', 'ed', 'phil')
 #' Ey <- f(x)
 #' y  <- rnorm(n, Ey, sigma)
 #' df <- data.frame(y, x)
 #' set.seed(99)
 #' 
-#' bartFit <- bart(y ~ rob + hugh + ed, df,
+#' bartFit <- bart(y ~ rob + hugh + ed + phil, df,
 #'                keepevery = 10, ntree = 100, keeptrees = TRUE)
 #'
 #' partial(bartFit, x.vars='hugh', trace=TRUE, ci=TRUE)
@@ -79,6 +81,34 @@ plots <- list()
 
 for (i in 1:length(pd$fd)) {
   
+  if(length(unique(pd$fit$data@x[,pd$xlbs[[i]]]))==2) {
+    
+    dfbin <- data.frame(pd$fd[[i]])
+    colnames(dfbin) <- c(0,1)
+    dfbin <- reshape2::melt(dfbin)
+    
+    if(transform==TRUE){
+      dfbin$value <- pnorm(dfbin$value)
+    }
+  
+    if(ci==FALSE) {
+    g <- ggplot(dfbin,aes(x=variable, y=value)) + geom_boxplot() + 
+      labs(title=pd$xlbs[[i]], y='Response',x='') + theme_light(base_size = 20) + 
+      theme(plot.title = element_text(hjust = 0.5),
+            axis.title.y = element_text(vjust=1.7))
+    } else {
+      g <- ggplot(dfbin,aes(x=variable, y=value)) + geom_boxplot( fill='deepskyblue1') + 
+        labs(title=pd$xlbs[[i]], y='Response',x='') + theme_light(base_size = 20) + 
+        theme(plot.title = element_text(hjust = 0.5),
+              axis.title.y = element_text(vjust=1.7)) 
+    }
+    
+    
+    plots[[i]] <- g
+    if(panels==FALSE) {print(g)}
+    
+  } else {
+    
   q50 <- apply(pd$fd[[i]],2,median)
   if(transform==TRUE) {q50 <- pnorm(q50)}
   
@@ -103,7 +133,7 @@ for (i in 1:length(pd$fd)) {
     theme(plot.title = element_text(hjust = 0.5),
           axis.title.y = element_text(vjust=1.7))
   
-  if(ci==TRUE) {alpha2 <- 0.05; k <- 4} else {alpha2 <- 0.1; k <- 2}
+  if(ci==TRUE) {alpha2 <- 0.05; k <- 4} else {alpha2 <- 0.1*(bartFit$call$ntree/100); k <- 2}
   if(trace==TRUE) {
     if(transform==TRUE) {
       for(j in 1:nrow(pd$fd[[i]])) {
@@ -124,6 +154,7 @@ for (i in 1:length(pd$fd)) {
   plots[[i]] <- g
   if(panels==FALSE) {print(g)}
 
+  }
 }
   
 if(panels==TRUE) {print(cowplot::plot_grid(plotlist=plots))}
