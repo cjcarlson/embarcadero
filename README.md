@@ -26,6 +26,7 @@ It's aggressively incomplete, with more to come hopefully. That would ideally in
 - parallelized prediction to Make More Faster
 - compatibility with other BART engines/possibility to select one manually
 - spatial projection of partials (this will take me a bit but is high on my priority list)
+- clever use of random effects like a year covariate for tSDMs
 
 __Can I help__?
 
