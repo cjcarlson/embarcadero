@@ -12,12 +12,12 @@
 
 bart.map <- function(model, inputstack, ci=FALSE, plots=FALSE) {
 
-  xnames <- attr(bartFit$fit$data@x, "term.labels")
+  xnames <- attr(model$fit$data@x, "term.labels")
   
   if(xnames %in% names(inputstack)) {
     inputstack <- inputstack[[xnames]]
   } else {
-    stop("Variable names of RasterStack don't ")
+    stop("Variable names of RasterStack don't match the requested names")
   }
   
   input.matrix <- as.matrix(getValues(inputstack))

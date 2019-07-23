@@ -11,7 +11,7 @@
 
 bart.auc <- function(model) {
  
-  true.vector <- best.model$fit$data@y
+  true.vector <- model$fit$data@y
   
   pred <- prediction(colMeans(pnorm(model$yhat.train)), true.vector)
   

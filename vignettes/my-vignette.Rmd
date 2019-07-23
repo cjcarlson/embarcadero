@@ -68,17 +68,7 @@ Let's read in the covariates, and make a bigger stack just to do some faster pre
 files <- list.files('~/Github/embarcadero/vignettes/covariates', full.names=TRUE)
 covs <- raster::stack(lapply(files, raster))
 
-cov.big <- covs
-
-  for(i in 1:nlayers(covs)) {
-    vx <- velox(covs[[i]])
-    vx$aggregate(factor=c(5,5), aggtype='mean')
-    if (i == 1) { cov.big <- stack(vx$as.RasterLayer())
-    } else { cov.big <- stack(cov.big,vx$as.RasterLayer())
-    }
-  }
-
-names(cov.big) <- names(covs)
+cov.big <- bigstack(covs, 10)
 ```
 
 _Hyalomma truncatum_ occurrence data is taken from the Cumming tick dataset
@@ -134,10 +124,10 @@ We could try something really simple on defaults, right out the gate. The \textt
 first.model <- bart(all.cov[,1:11], all.cov[,'tick'], keeptrees=TRUE)
 ```
 
-That's well and good, but dbarts doesn't have great tools to evaluate what the models do, or how they're working as predictive tools. Plus, we can't see the spatial prediction, which makes it hard to know if it's even looking plausible. One quick trick is to use the \texttt{bart.auc} function in \texttt{embarcadero}, which uses the \texttt{dbarts} model object (or an \texttt{embarcadero} model object) and the vector of true data.
+That's well and good, but dbarts doesn't have great tools to evaluate what the models do, or how they're working as predictive tools. Plus, we can't see the spatial prediction, which makes it hard to know if it's even looking plausible. One quick trick is to use the \texttt{bart.auc} function in \texttt{embarcadero}.
 
 ```{r}
-bart.auc(first.model, all.cov[,'tick'])
+bart.auc(first.model)
 ```
 
 A high AUC value indicates our model performs well. The AUC function also returns an optimal threshold that maximizes the true skill statistic (TSS), and the sensitivity/specificity of the model at that cutoff (alpha).
@@ -147,8 +137,8 @@ What do the predictions look like? To make a predicted raster, we have to use \t
 
 ```{r, fig.fullwidth=TRUE}
 
-pred.prelim <- predict.dbart.raster(model = first.model,
-                                    inputstack = cov.big)
+pred.prelim <- bart.map(model = first.model,
+                        inputstack = cov.big)
 plot(pred.prelim, main='Hyalomma truncatum')
 
 points(SpatialPoints(ticks[,c('Longitude.X','Latitude.Y')]), 
@@ -166,7 +156,6 @@ First, let's look at the variable contributions in the existing model:
 
 ```{r}
 varimp(model=first.model, 
-       names=names(covs), 
        plots = TRUE)
 ```
 
@@ -202,10 +191,10 @@ Normally this step cuts a few variables - it's probably a good sign about our _a
 # Rerun the model
 good.model <- bart(all.cov[,varlist], all.cov[,'tick'], keeptrees=TRUE)
 # Check the AUC
-bart.auc(good.model, all.cov[,'tick'])
+bart.auc(good.model)
 # Do the spatial prediction
-hytr.layer <- predict.dbart.raster(model = good.model,
-                                    inputstack = covs[[varlist]])
+hytr.layer <- bart.map(model = good.model,
+                       inputstack = covs)
 # How's it look?
 plot(hytr.layer, main='Hyalomma truncatum')
 
@@ -263,8 +252,8 @@ cchf.model <- bart.var(xdata=all.cov[,1:12],
                        iter.plot = 100)
 
 # Do the spatial prediction
-cchf.map <- predict.dbart.raster(model = cchf.model$Model.object,
-                                    inputstack = covs[[cchf.model$Variables]])
+cchf.map <- bart.map(model = cchf.model,
+                     inputstack = covs)
 # How's it look?
 plot(cchf.map, main='CCHF')
 ```
@@ -295,9 +284,9 @@ This is going to be, by default, the slowest part of this process.
 
 ```{r}
 
-cchf.map <- predict.dbart.raster(model = cchf.model$Model.object,
-                                 inputstack = covs[[cchf.model$Variables]],
-                                 ci=TRUE)
+cchf.map <- bart.map(model = cchf.model,
+                     inputstack = covs,
+                     ci=TRUE)
 ```
 
 When you run this argument with "ci=TRUE" it samples a 5\% and 95\% draw to give you a 90\% credible interval on that posterior. The difference between them--the posterior width in a given pixel--is a pretty good spatial measure of uncertainty. This is the main level of uncertainty people tend to report when they do studies like this, so I'm not feeling a lot of pressure to add more functionality here. But if people want it, I'll add something to pull arbitrary levels from the posterior. (It's also worth noting that the credible intervals in the partial dependence plots come from a similar approach, though I am not in fact completely sure the bounds are a 95\% CI.)
@@ -307,21 +296,26 @@ When you run this argument with "ci=TRUE" it samples a 5\% and 95\% draw to give
 Finally, let's unpack some of what's under the hood in the model. First let's look at the variable contributions:
 
 ```{r}
-varimp(cchf.model$Model.object, cchf.model$Variables, plots=TRUE)
+varimp(cchf.model, plots=TRUE)
 ```
 
-NDVI amplitude and the tick vector come out on top; bio1 and mean NDVI also contribute a lot. Let's look at the response functions a little bit. First, let's look at the partial dependence plots for a couple individual variables. 
+NDVI amplitude and the tick vector come out on top; bio1 and mean NDVI also contribute a lot. Let's look at the response functions a little bit. First, let's look at the partial dependence plots for a couple individual variables. (One downside of the BART native plots is (1) they're a bit janky looking and (2) they just spit out a lot of text. That's why the objects are being saved to "p". But I wrote a wrapper that uses what pdbart spits out and ggplot2 to save you the trouble of thinking through dataviz on this one thing.)
 
 ```{r}
 # Let's do one variable
 p <- pdbart(cchf.model$Model.object, xind=hytr, pl=TRUE)
+
+# That's not very pretty. Let's use embarcadero's version, which allows multiple ways of visualizing the posterior
+partial(cchf.model, 'hytr', trace=FALSE, ci=TRUE, equal=FALSE)
+
+# Hm.... that's a little better. Let's up the smooth (this ISN'T a smoother - it just takes more points to fit the curve) and make the spacing equal.
+partial(cchf.model, 'hytr', trace=FALSE, ci=TRUE, equal=TRUE, smooth=10)
+
 # Let's do a couple at once
-p <- pdbart(cchf.model$Model.object, xind=c('bio12','bio13'), pl=TRUE)
+partial(cchf.model, x.vars=c('bio12','bio13'), trace=TRUE, ci=FALSE, panel=TRUE, smooth=10)
 ```
 
-(One downside of the BART plots is that they just spit out a lot of text. That's why the objects are being saved to "p".)
-
-Some of these patterns are pretty clear - suitability declines above 20 degrees C, and increases with the probability of the tick. NDVI is a little less intuitive to the human mind, but a great feature of BART is that we can pretty easily do two-dimensional partial dependence plots, and we can pretty easily visualize the optimum:
+Some of these patterns are pretty clear - suitability declines above 20 degrees C, and increases with the probability of the tick. NDVI is a little less intuitive to the human mind, but a great feature of BART is that we can pretty easily do two-dimensional partial dependence plots, and we can pretty easily visualize the optimum (I haven't added a wrapper for this yet):
 
 ```{r}
 p <- pd2bart(cchf.model$Model.object, xind=c('ndvi.mean', 'ndvi.amp'), pl=TRUE)
