@@ -3,6 +3,7 @@
 export(bart.auc)
 export(bart.map)
 export(bart.var)
+export(bigstack)
 export(partial)
 export(theme_bluewhite)
 export(variable.step)

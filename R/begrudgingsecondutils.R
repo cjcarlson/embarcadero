@@ -1,4 +1,10 @@
-#'  @export
+#' @title Big stack
+#'
+#' @description
+#'
+#' Big stack
+#' 
+#' @export
 
 bigstack <- function(stack, by) {
   if(!(class(stack)=='RasterStack')) { stop("Needs a raster stack dude") }

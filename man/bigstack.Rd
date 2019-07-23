@@ -2,10 +2,10 @@
 % Please edit documentation in R/begrudgingsecondutils.R
 \name{bigstack}
 \alias{bigstack}
-\title{@export}
+\title{Big stack}
 \usage{
 bigstack(stack, by)
 }
 \description{
-@export
+Big stack
 }
