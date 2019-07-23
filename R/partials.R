@@ -142,7 +142,7 @@ for (i in 1:length(pd$fd)) {
     theme(plot.title = element_text(hjust = 0.5),
           axis.title.y = element_text(vjust=1.7))
   
-  if(ci==TRUE) {alpha2 <- 0.05; k <- 4} else {alpha2 <- 0.05*(model$fit$control@n.trees/200); k <- 2}
+  if(ci==TRUE) {alpha2 <- 0.05; k <- 4} else {alpha2 <- 0.025*(model$fit$control@n.trees/200); k <- 2}
   if(trace==TRUE) {
     if(transform==TRUE) {
       for(j in 1:nrow(pd$fd[[i]])) {

@@ -65,8 +65,7 @@ Let's start by loading in the sample data and predictor set. Based on some exper
 Let's read in the covariates, and make a bigger stack just to do some faster predictions along the way; \texttt{velox} works well for this. BARTs predict fairly slowly with \texttt{dbarts} because it's not parallelized yet. Other packages have that capacity, but less functionality for other things, so we chose functionality at the expense of speed; hopefully future versions will build on this. 
 
 ```{r}
-files <- list.files('~/Github/embarcadero/vignettes/covariates', full.names=TRUE)
-covs <- raster::stack(lapply(files, raster))
+data(covs)
 
 cov.big <- bigstack(covs, 10)
 ```
@@ -74,7 +73,7 @@ cov.big <- bigstack(covs, 10)
 _Hyalomma truncatum_ occurrence data is taken from the Cumming tick dataset
 
 ```{r}
-ticks <- read.csv('~/Github/embarcadero/vignettes/Hytr.csv')
+data(ticks)
 head(ticks)
 nrow(ticks)
 ```
@@ -215,7 +214,7 @@ covs <- stack(covs, hytr.layer)
 names(covs)[12]='hytr'
 
 # Read in the data
-cchf <- read.csv('~/Github/embarcadero/vignettes/CCHF_1953_2012_Messina.csv')
+data(cchf)
 head(cchf)
 nrow(cchf)
 
@@ -309,10 +308,10 @@ p <- pdbart(cchf.model$Model.object, xind=hytr, pl=TRUE)
 partial(cchf.model, 'hytr', trace=FALSE, ci=TRUE, equal=FALSE)
 
 # Hm.... that's a little better. Let's up the smooth (this ISN'T a smoother - it just takes more points to fit the curve) and make the spacing equal.
-partial(cchf.model, 'hytr', trace=FALSE, ci=TRUE, equal=TRUE, smooth=10)
+partial(cchf.model, 'hytr', trace=TRUE, ci=FALSE, equal=TRUE, smooth=10)
 
 # Let's do a couple at once
-partial(cchf.model, x.vars=c('bio12','bio13'), trace=TRUE, ci=FALSE, panel=TRUE, smooth=10)
+partial(cchf.model, x.vars=c('bio12','bio13'), trace=FALSE, ci=TRUE, panel=TRUE, smooth=5)
 ```
 
 Some of these patterns are pretty clear - suitability declines above 20 degrees C, and increases with the probability of the tick. NDVI is a little less intuitive to the human mind, but a great feature of BART is that we can pretty easily do two-dimensional partial dependence plots, and we can pretty easily visualize the optimum (I haven't added a wrapper for this yet):
