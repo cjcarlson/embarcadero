@@ -5,12 +5,13 @@
 #' Why don't ecologists project partial dependence surfaces in the real, geography-having world? Now they can. That's probably good right? Am I doing good? Father?
 #'
 #' @param model A dbarts model object
-#' @param x.vars A list of the variables for which you want to run the partials. Defaults to doing all of them.
-#' @param equal Spacing x levels equally instead of using quantiles
-#' @param smooth A multiplier for how much smoother you want the sampling of the levels to be.
-#' @param posterior The way the posterior is visualized: defaults to nothing, but can do "CI" for the credible interval or "trace" for traceplots
-#'
-#'
+#' @param envs The rasterStack of environmental variables 
+#' @param x.vars The particular x variables you want to map
+#' @param equal Equal spacing on x breaks (versus quantiles). 
+#' @param smooth Smoothing factor for the x breaks (works like partials).
+#' @param transform Backtransform the pnorm or not
+#' @param save Turn this on if you want to save the outputs as a RasterStack, for nicer use/plotting elsewhere.
+#' 
 #' @return Returns a nice plot
 #'
 #' @examples
@@ -23,9 +24,8 @@
 #'
 
 spartial <- function(model, envs, x.vars=NULL, 
-                     equal=TRUE, smooth=1,
-                    ci=TRUE, transform=TRUE,
-                    save=FALSE) {
+                     equal=FALSE, smooth=1,
+                     transform=TRUE, save=TRUE) {
   
   if(smooth>10) {
     warning("You have chosen way, way too much smoothing... poorly")

@@ -4,19 +4,23 @@
 \alias{spartial}
 \title{Spatial partial dependence plots}
 \usage{
-spartial(model, envs, x.vars = NULL, equal = TRUE, smooth = 1,
-  ci = TRUE, transform = TRUE, save = FALSE)
+spartial(model, envs, x.vars = NULL, equal = FALSE, smooth = 1,
+  transform = TRUE, save = TRUE)
 }
 \arguments{
 \item{model}{A dbarts model object}
 
-\item{x.vars}{A list of the variables for which you want to run the partials. Defaults to doing all of them.}
+\item{envs}{The rasterStack of environmental variables}
 
-\item{equal}{Spacing x levels equally instead of using quantiles}
+\item{x.vars}{The particular x variables you want to map}
 
-\item{smooth}{A multiplier for how much smoother you want the sampling of the levels to be.}
+\item{equal}{Equal spacing on x breaks (versus quantiles).}
 
-\item{posterior}{The way the posterior is visualized: defaults to nothing, but can do "CI" for the credible interval or "trace" for traceplots}
+\item{smooth}{Smoothing factor for the x breaks (works like partials).}
+
+\item{transform}{Backtransform the pnorm or not}
+
+\item{save}{Turn this on if you want to save the outputs as a RasterStack, for nicer use/plotting elsewhere.}
 }
 \value{
 Returns a nice plot
