@@ -21,11 +21,11 @@ This package is basically a wrapper around 'dbarts'  with a few tools
 - AUC calculation 
 - a 95% credible interval from the posterior distribution
 - automatic Nice Plots for partials, including multiple ways to visualize posterior draws
+- spatial projection of partials ("spartials")
 
 It's aggressively incomplete, with more to come hopefully. That would ideally include:
 - parallelized prediction to Make More Faster
 - compatibility with other BART engines/possibility to select one manually
-- spatial projection of partials (this will take me a bit but is high on my priority list)
 - clever use of random effects like a year covariate for tSDMs
 
 __Can I help__?
