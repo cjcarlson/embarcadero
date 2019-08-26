@@ -26,7 +26,6 @@ This package is basically a wrapper around 'dbarts'  with a few tools
 It's aggressively incomplete, with more to come hopefully. That would ideally include:
 - parallelized prediction to Make More Faster
 - compatibility with other BART engines/possibility to select one manually
-- clever use of random effects like a year covariate for tSDMs
 
 __Can I help__?
 
