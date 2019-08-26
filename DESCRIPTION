@@ -6,7 +6,7 @@ Description: Species distribution models with BART
 License: CC0
 Encoding: UTF-8
 LazyData: true
-Depends: raster, dbarts, Metrics, tidyverse, dismo, ROCR, cowplot
+Depends: raster, dbarts, Metrics, tidyverse, dismo, ROCR, cowplot, velox
 RoxygenNote: 6.1.1
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
