@@ -16,10 +16,13 @@ bigstack <- function(stack, by) {
     if (i == 1) {
       bigstack <- stack(vx$as.RasterLayer())
     } else {
-      bigstack <- stack(bigstack,vx$as.RasterLayer())
+      v <- vx$as.RasterLayer()
+      if(!(bigstack@crs@projargs==v@crs@projargs)) {v@crs <- bigstack@crs}
+      bigstack <- stack(bigstack,v)
     }
     setTxtProgressBar(pb, i)
   }  
   names(bigstack) <- names(stack)
   return(bigstack)
 }
+
