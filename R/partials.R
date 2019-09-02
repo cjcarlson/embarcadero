@@ -168,4 +168,5 @@ for (i in 1:length(pd$fd)) {
   
 if(panels==TRUE) {print(cowplot::plot_grid(plotlist=plots))}
   
+return(plots)
 }
