@@ -14,7 +14,7 @@ bart.map <- function(model, inputstack, ci=FALSE, plots=FALSE) {
 
   xnames <- attr(model$fit$data@x, "term.labels")
   
-  if(xnames %in% names(inputstack)) {
+  if(all(xnames %in% names(inputstack))) {
     inputstack <- inputstack[[xnames]]
   } else {
     stop("Variable names of RasterStack don't match the requested names")
