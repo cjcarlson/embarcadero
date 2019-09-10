@@ -15,18 +15,16 @@ bart.auc <- function(model) {
   
   pred <- prediction(colMeans(pnorm(model$yhat.train)), true.vector)
   
-  print('AUC = ')
-  print(performance(pred,"auc")@y.values[[1]])
-  plot(performance(pred, "tpr", "fpr"),main='Receiver operator curve')
-  abline(0,1,col='red')
-
-  readline(prompt="Press [enter] to continue")
-
   perf.tss <- performance(pred,"sens","spec")
   tss.list <- (perf.tss@x.values[[1]] + perf.tss@y.values[[1]] - 1)
   tss.df <- data.frame(alpha=perf.tss@alpha.values[[1]],tss=tss.list)
   plot(tss.df,type='l')
-
+  
+  print('AUC = ')
+  print(performance(pred,"auc")@y.values[[1]])
+  plot(performance(pred, "tpr", "fpr"),main='Receiver operator curve')
+  abline(0,1,col='red')
+  
   thresh <- tss.df$alpha[which(tss.df$tss==max(tss.df$tss))]
   print('TSS threshold')
   print(thresh)
