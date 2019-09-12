@@ -177,7 +177,6 @@ Automated stepwise reduction isn't the best way to do things in machine learning
 That's not perfect, and you can take or leave it as an approach. Expert knowledge about variable importance and cautious inclusion will _always_ be better, epistemologically, than automated stepwise feature set reduction.
 
 ```{r}
-
 varlist <- variable.step(x.data=all.cov[,1:11],
               y.data=all.cov[,'tick'],
               n.trees=10)
