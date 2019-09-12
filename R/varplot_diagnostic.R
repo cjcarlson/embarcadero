@@ -54,9 +54,8 @@ varimp.plot <- function(x.data, y.data, iter=50) {
   g1 <- ggplot2::ggplot(vi, aes(y=imp, x=names, group=trees)) +
     geom_line(aes(color=trees)) + geom_point(size=3) + theme_classic() +
     ylab("Relative contribution\n") + xlab("\nVariables dropped") +
+    ggpubr::rotate_x_text(angle = 35) + 
     theme(axis.text = element_text(size=10),
-          axis.title = element_text(size=14,face="bold"),
-          axis.text.x = element_text(angle = 45)); print(g1)
+          axis.title = element_text(size=14,face="bold")); print(g1)
 
-
-}
+  }
