@@ -5,4 +5,4 @@ covsraw <- raster::stack(list.files(pattern='.asc',
 covsraw <- brick(covsraw)
 covsraw <- stack(covsraw)
 
-usethis::use_data("covsraw")
+usethis::use_data(covsraw)

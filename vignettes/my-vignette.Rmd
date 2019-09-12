@@ -65,7 +65,9 @@ Let's start by loading in the sample data and predictor set. Based on some exper
 Let's read in the covariates, and make a bigger stack just to do some faster predictions along the way; \texttt{velox} works well for this. BARTs predict fairly slowly with \texttt{dbarts} because it's not parallelized yet. Other packages have that capacity, but less functionality for other things, so we chose functionality at the expense of speed; hopefully future versions will build on this. 
 
 ```{r}
-data(covs)
+data(covsraw)
+
+covs <- covsraw
 
 cov.big <- bigstack(covs, 10)
 ```
