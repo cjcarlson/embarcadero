@@ -7,6 +7,8 @@
 #' @export
 
 bigstack <- function(stack, by) {
+  crs0 <- stack@crs
+  
   if(!(class(stack)=='RasterStack')) { stop("Needs a raster stack dude") }
   pb <- txtProgressBar(style=3, min=0, max=nlayers(stack))
   setTxtProgressBar(pb, 0)
@@ -15,9 +17,10 @@ bigstack <- function(stack, by) {
     vx$aggregate(factor=c(by,by), aggtype='mean')
     if (i == 1) {
       bigstack <- stack(vx$as.RasterLayer())
+      bigstack@crs <- crs0
     } else {
       v <- vx$as.RasterLayer()
-      if(!(bigstack@crs@projargs==v@crs@projargs)) {v@crs <- bigstack@crs}
+      v@crs <- crs0 
       bigstack <- stack(bigstack,v)
     }
     setTxtProgressBar(pb, i)
