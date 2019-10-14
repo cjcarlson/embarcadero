@@ -23,9 +23,10 @@ This package is basically a wrapper around 'dbarts'  with a few tools
 - automatic Nice Plots for partials, including multiple ways to visualize posterior draws
 - spatial projection of partials ("spartials")
 
-It's aggressively incomplete, with more to come hopefully. That would ideally include:
+In future versions I'd hope to include:
 - parallelized prediction to Make More Faster
 - compatibility with other BART engines/possibility to select one manually
+- explicitly-spatial adaptations of BART (spatial priors)
 
 __Can I help__?
 
