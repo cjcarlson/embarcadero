@@ -30,7 +30,7 @@ In future versions I'd hope to include:
 
 __Can I help__?
 
-Please! I'm currently writing this up for _Methods in Ecology & Evolution_ and hope to submit by October. The vignette in development will be part of that paper. 
+Please! Reach out to cjc322@georgetown.edu if you want to help with development or otherwise are interested in being one of the first users.
 
 __Why is it called embarcadero?__
 
