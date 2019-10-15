@@ -26,7 +26,7 @@ spartial(model, envs, x.vars = NULL, equal = FALSE, smooth = 1,
 Returns a nice plot
 }
 \description{
-Why don't ecologists project partial dependence surfaces in the real, geography-having world? Now they can. That's probably good right? Am I doing good? Father?
+Project partial dependence surfaces in the real, geography-having world: see the spatial signal of any given variable's contribution to the model predictions.
 }
 \examples{
 library(embarcadero)
