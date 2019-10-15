@@ -28,6 +28,13 @@ In future versions I'd hope to include:
 - compatibility with other BART engines/possibility to select one manually
 - explicitly-spatial adaptations of BART (spatial priors)
 
+__How do I install__?
+
+```
+# install.packages('devtools')
+devtools::install_github('cjcarlson/embarcadero')
+```
+
 __Can I help__?
 
 Please! Reach out to cjc322@georgetown.edu if you want to help with development or otherwise are interested in being one of the first users.
