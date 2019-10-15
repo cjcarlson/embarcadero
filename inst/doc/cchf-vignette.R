@@ -74,7 +74,7 @@ varimp(model=first.model,
        plots = TRUE)
 
 ## ------------------------------------------------------------------------
-varimp.plot(x.data=all.cov[,1:11], 
+varimp.diag(x.data=all.cov[,1:11], 
             y.data=all.cov[,'tick'],
             iter=100)
 
