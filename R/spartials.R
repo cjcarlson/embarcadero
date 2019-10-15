@@ -2,7 +2,7 @@
 #'
 #' @description
 #'
-#' Why don't ecologists project partial dependence surfaces in the real, geography-having world? Now they can. That's probably good right? Am I doing good? Father?
+#' Project partial dependence surfaces in the real, geography-having world: see the spatial signal of any given variable's contribution to the model predictions. 
 #'
 #' @param model A dbarts model object
 #' @param envs The rasterStack of environmental variables 
