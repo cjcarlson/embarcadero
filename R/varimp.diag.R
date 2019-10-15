@@ -8,7 +8,7 @@
 #' @param ydata A vector of outcomes (1/0)
 #' @param iter How many BART models to run for each of (10, 20, 50, 100, 150, 200) tree models
 #'
-#' @export varimp.plot varimp.diag 
+#' @export 
 #' @aliases varimp.plot 
 #'
 
