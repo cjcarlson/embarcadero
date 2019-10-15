@@ -2,7 +2,10 @@
 #'
 #' @description
 #'
-#' Big stack
+#' Big stack is an incredibly goofy convenience tool (analogous to raster::aggregate) I use that runs a velox wrapper to aggregate up a rasterstack. This is useful if you're doing high-res mapping and you want to do some predictive checks. 
+#' 
+#' @param stack A raster stack. It can be a one-layer stack if you'd like, but then just use velox's $aggregate function.
+#' @param by The factor by which you want to aggregate your rasterstack.
 #' 
 #' @export
 

@@ -2,7 +2,7 @@ Package: embarcadero
 Title: Species distribution models with BART
 Version: 1.0.1.0001
 Authors@R: person("Colin", "Carlson", email = "cjc322@georgetown.edu", role = c("aut", "cre"))
-Description: Species distribution models with BART
+Description: A convenience tool package for running and analyzing species distribution models with Bayesian additive regression trees. 
 License: CC0
 Encoding: UTF-8
 LazyData: true

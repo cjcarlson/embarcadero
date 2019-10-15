@@ -8,10 +8,11 @@
 #' @param ydata A vector of outcomes (1/0)
 #' @param iter How many BART models to run for each of (10, 20, 50, 100, 150, 200) tree models
 #'
-#' @export
+#' @export varimp.plot varimp.diag 
+#' @aliases varimp.plot 
 #'
 
-varimp.plot <- function(x.data, y.data, iter=50) {
+varimp.diag <- function(x.data, y.data, iter=50) {
 
   nvars <- ncol(x.data)
   varnums <- c(1:nvars)

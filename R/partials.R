@@ -1,4 +1,4 @@
-#' @title Better, nicer, friendlier partials
+#' @title Better, nicer, friendlier partial dependence plots
 #'
 #' @description
 #'
@@ -8,10 +8,13 @@
 #' @param x.vars A list of the variables for which you want to run the partials. Defaults to doing all of them.
 #' @param equal Spacing x levels equally instead of using quantiles
 #' @param smooth A multiplier for how much smoother you want the sampling of the levels to be.
-#' @param posterior The way the posterior is visualized: defaults to nothing, but can do "CI" for the credible interval or "trace" for traceplots
+#' @param ci Plot the 95\% credible interval with a blue bar 
+#' @param trace Traceplots for each individual draw (partially misleading because it doesn't show how the MCMC upweights them, but does communicate the distribution of rulesets.)
+#' @param transform This converts from the logit to actual 0 to 1 probabilities. I wouldn't turn this off unless you're really interested in a deep dive on the model.
+#' @param panels For multiple variables, use this to create a multipanel figure. 
 #'
 #'
-#' @return Returns a nice plot
+#' @return Returns a ggplot object or cowplot object.
 #'
 #' @examples
 #' f <- function(x) { return(0.5 * x[,1] + 2 * x[,2] * x[,3]) - 5*x[,4] }

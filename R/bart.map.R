@@ -1,12 +1,14 @@
-#' @title Spatial prediction using dbarts
+#' @title Spatial prediction 
 #'
 #' @description
 #'
 #' Spatial prediction of a BART model
 #'
-#' @param model model object from dbarts package
-#' @param inputstack A RasterStack of environmental predictors; make sure they have the same names as the predictors that went into the model object.
-#'
+#' @param model A model object from dbarts package
+#' @param inputstack A RasterStack of environmental predictors; make sure they have the same names as the predictors that went into the model object. (If they don't it'll throw an error.)
+#' @param ci Return 5\% and 95\% credible interval bounds on the predictions, also as rasters. (Returns a list of mean, upper, and lower if you turn this on.) Note that this will make it take much longer to run.
+#' @param plots Automatically produce a plot of the mean, the 95\% CI width, the lower and the upper bound. 
+#' 
 #' @export
 #'
 

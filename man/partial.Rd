@@ -2,7 +2,7 @@
 % Please edit documentation in R/partials.R
 \name{partial}
 \alias{partial}
-\title{Better, nicer, friendlier partials}
+\title{Better, nicer, friendlier partial dependence plots}
 \usage{
 partial(model, x.vars = NULL, equal = TRUE, smooth = 1, ci = TRUE,
   trace = TRUE, transform = TRUE, panels = FALSE)
@@ -16,10 +16,16 @@ partial(model, x.vars = NULL, equal = TRUE, smooth = 1, ci = TRUE,
 
 \item{smooth}{A multiplier for how much smoother you want the sampling of the levels to be.}
 
-\item{posterior}{The way the posterior is visualized: defaults to nothing, but can do "CI" for the credible interval or "trace" for traceplots}
+\item{ci}{Plot the 95\% credible interval with a blue bar}
+
+\item{trace}{Traceplots for each individual draw (partially misleading because it doesn't show how the MCMC upweights them, but does communicate the distribution of rulesets.)}
+
+\item{transform}{This converts from the logit to actual 0 to 1 probabilities. I wouldn't turn this off unless you're really interested in a deep dive on the model.}
+
+\item{panels}{For multiple variables, use this to create a multipanel figure.}
 }
 \value{
-Returns a nice plot
+Returns a ggplot object or cowplot object.
 }
 \description{
 I don't really like the partial visualizations in dbarts so I made some of my own, with a little more customization options.

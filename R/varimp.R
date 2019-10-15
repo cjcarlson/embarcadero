@@ -5,7 +5,6 @@
 #' Variable importance, as measured in the proportion of total branches used for a given variable.
 #'
 #' @param model The dbarts model object
-#' @param names The variable names (not conserved in dbarts necessarily)
 #' @param plots Turn this on for a nice variable contribution plot
 #'
 #'

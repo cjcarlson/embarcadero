@@ -2,7 +2,7 @@
 title: "Mapping _Hyalomma_ and Crimean-Congo Haemorrhagic Fever in Africa with BARTs"
 output: pdf_document
 vignette: >
-  %\VignetteIndexEntry{my-vignette}
+  %\VignetteIndexEntry{cchf-vignette}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -164,10 +164,10 @@ This tells us roughly how the variables contribute so far, but it doesn't tell u
 
 Previously, it's been suggested that the best variable diagnostic for BART is to run models with progressively smaller numbers of trees - and as you get down to 10 or 20 trees per model, the contributions of bad or irrelevant variables will drop out. This is because like most CART methods, BART has the ability to overfit on variables with low information content. 
 
-What \texttt{varimp.plot} does is run variable importance for hundreds of models at different tree levels. Let's say 10 models per combination is enough. This will print each level of models it's run, and then it will make a plot that shows us variable importance across runs.
+What \texttt{varimp.diag} does is run variable importance for hundreds of models at different tree levels. Let's say 10 models per combination is enough. This will print each level of models it's run, and then it will make a plot that shows us variable importance across runs.
 
 ```{r}
-varimp.plot(x.data=all.cov[,1:11], 
+varimp.diag(x.data=all.cov[,1:11], 
             y.data=all.cov[,'tick'],
             iter=100)
 ```

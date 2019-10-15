@@ -2,7 +2,7 @@
 #'
 #' @description
 #'
-#' The automated stepwise variable set reduction algorithm. 
+#' The automated stepwise variable set reduction algorithm. It starts with the full variable set, runs a given number of models (iter) with a given number of trees (n.trees), and eliminates the variable with the worst contribution. It does this until there are only three left, and charts the RMSE of each model. Then it finally recommends the model with the lowest RMSE.
 #'
 #' @param xdata A data frame of covariates
 #' @param ydata A vector of outcomes (1/0)

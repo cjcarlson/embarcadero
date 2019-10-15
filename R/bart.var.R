@@ -20,7 +20,7 @@
 bart.var <- function(xdata, ydata,
                                 iter.step=100, tree.step=10,
                                 iter.plot=100) {
-  varimp.plot(xdata, ydata, iter=iter.plot)
+  varimp.diag(xdata, ydata, iter=iter.plot)
   vs <- variable.step(xdata, ydata, n.trees=tree.step, iter=iter.step)
   invisible(best.model <- bart(xdata[,vs], ydata, keeptrees=TRUE))
   varimp(best.model, plots=TRUE)
