@@ -34,11 +34,13 @@ library(velox)
 set.seed(12345)
 
 data(ticks)
-data(covs)
+data(covsraw)
+covs = covsraw
 mod <- SpatialPointsDataFrame(ticks[,3:4],data.frame(ticks[,1]))
 names(mod@data) <- 'Presence'
 tmp=rasterize(mod, covs[[1]], field="Presence", fun="min")
 pts.sp1=rasterToPoints(tmp, fun=function(x){x>0})
+
 pres.cov <- raster::extract(covs, pts.sp1[,1:2])
 absence <- randomPoints(covs,nrow(ticks)) 
 abs.cov <- raster::extract(covs, absence)
