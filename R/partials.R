@@ -38,7 +38,7 @@
 #' 
 #' partial(bartFit, x.vars='rob', equal=TRUE, smooth=10, trace=FALSE, ci=TRUE)
 #' partial(bartFit, x.vars='ed', equal=TRUE, smooth=10, trace=TRUE, ci=FALSE)
-#' partial(bartFit, equal=TRUE, smooth=10, trace=FALSE, ci=TRUE, panel=TRUE)
+#' partial(bartFit, equal=TRUE, smooth=10, trace=FALSE, ci=TRUE, panels=TRUE)
 #'
 #' @export
 #'
@@ -169,7 +169,9 @@ for (i in 1:length(pd$fd)) {
   }
 }
   
-if(panels==TRUE) {print(cowplot::plot_grid(plotlist=plots))}
-  
-return(plots)
+if(panels==TRUE) {#print(cowplot::plot_grid(plotlist=plots))
+  return(cowplot::plot_grid(plotlist=plots)) 
+} else {
+  return(plots)
+}
 }

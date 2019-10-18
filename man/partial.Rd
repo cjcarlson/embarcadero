@@ -52,6 +52,6 @@ partial(bartFit, x.vars='hugh', equal=TRUE, smooth=10, trace=TRUE, ci=TRUE)
 
 partial(bartFit, x.vars='rob', equal=TRUE, smooth=10, trace=FALSE, ci=TRUE)
 partial(bartFit, x.vars='ed', equal=TRUE, smooth=10, trace=TRUE, ci=FALSE)
-partial(bartFit, equal=TRUE, smooth=10, trace=FALSE, ci=TRUE, panel=TRUE)
+partial(bartFit, equal=TRUE, smooth=10, trace=FALSE, ci=TRUE, panels=TRUE)
 
 }
