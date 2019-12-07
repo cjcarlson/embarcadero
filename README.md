@@ -35,6 +35,10 @@ __How do I install__?
 devtools::install_github('cjcarlson/embarcadero')
 ```
 
+__How do I cite embarcadero__?
+
+Please cite [this](https://www.biorxiv.org/content/biorxiv/early/2019/09/19/774604.full.pdf) preprint for now. The paper is currently in revision at *Methods in Ecology and Evolution*!
+
 __Can I help__?
 
 Please! Reach out to cjc322@georgetown.edu if you want to help with development or otherwise are interested in being one of the first users.
