@@ -23,6 +23,7 @@ bart.map <- function(model, inputstack, ci=FALSE, plots=FALSE) {
   }
   
   input.matrix <- as.matrix(getValues(inputstack))
+  
   output = predict(model,
                    input.matrix)
   output = pnorm(output)
