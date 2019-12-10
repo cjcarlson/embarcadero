@@ -40,7 +40,6 @@ predict2.bart <- function(object,
     split <- floor(nrow(input.matrix)/splitby)
     input.df <- data.frame(input.matrix)
     input.str <- split(input.df, (as.numeric(1:nrow(input.df))-1) %/% split)
-    pb <- txtProgressBar(min = 0, max = length(input.str), style = 3)
     for(i in 1:length(input.str)){
         if(i==1) {start_time <- Sys.time()}
         pred <- dbarts:::predict.bart(object, input.str[[i]])
@@ -49,6 +48,7 @@ predict2.bart <- function(object,
         if(i==1) {end_time <- Sys.time()
                   print('Estimated time to total prediction (mins):') 
                   print(length(input.str)*as.numeric(end_time - start_time)/60)}
+        pb <- txtProgressBar(min = 0, max = length(input.str), style = 3)
         setTxtProgressBar(pb, i)
     }
     if(length(quantiles)==0) {
