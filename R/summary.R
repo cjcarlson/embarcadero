@@ -35,7 +35,6 @@ summary.bart <- function(object, plots=TRUE) {
   cat('Resulting type II error rate: ', 1-perf.tss@x.values[[1]][which(perf.tss@alpha.values[[1]]==thresh)], "\n") # Type II error rate
   
   if(plots==TRUE){
-  par(mfrow=c(2,2))
     
     x <- performance(pred, "tpr", "fpr")
     rocdf <- data.frame(fpr=x@x.values[[1]],
@@ -68,9 +67,9 @@ summary.bart <- function(object, plots=TRUE) {
     
     g4 <- ggplot(obsf, aes(x=fitted, y=factor(observed), 
                      fill=factor(classified), color=factor(classified))) + 
-      geom_point() + xlab('Predicted probability') + 
+      geom_jitter(height = 0.2, size=0.9) + xlab('Predicted probability') + 
       ggtitle('Classified fitted values') + 
-      ylab('True classification') + 
+      ylab('True classification') +  
       #labs(fill = "Thresholded", col='Thresholded') + 
       theme_classic() + theme(legend.position = 'none') + 
       geom_vline(xintercept=thresh,col='black') 
