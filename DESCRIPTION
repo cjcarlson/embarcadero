@@ -6,7 +6,7 @@ Description: A convenience tool package for running and analyzing species distri
 License: CC0
 Encoding: UTF-8
 LazyData: true
-Depends: raster, dbarts, Metrics, tidyverse, dismo, ROCR, cowplot,
+Depends: raster, dbarts, Metrics, tidyverse, dismo, ROCR, patchwork, cowplot,
         velox, ggpubr, matrixStats, data.table
 RoxygenNote: 6.1.1
 Suggests: knitr, rmarkdown
