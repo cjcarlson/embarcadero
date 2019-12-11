@@ -16,5 +16,5 @@ predict2.bart(object, inputstack, splitby = 1, quantiles = c())
 \item{quantiles}{Include the extraction of quantiles (e.g. 5\% and 95\% credible interval) from the posterior}
 }
 \description{
-This is gonna be messy from a development standpoint
+A predict() wrapper for combining BART models with spatial input data, to generate a Raster or RasterStack of predicted outputs.
 }
