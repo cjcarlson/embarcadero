@@ -3,7 +3,7 @@
 S3method(summary,bart)
 export(bart.auc)
 export(bart.map)
-export(bart.var)
+export(bart.step)
 export(bigstack)
 export(partial)
 export(predict2.bart)

@@ -17,15 +17,16 @@
 #'
 #'
 
-bart.var <- function(xdata, ydata,
-                                iter.step=100, tree.step=10,
-                                iter.plot=100) {
-  varimp.diag(xdata, ydata, iter=iter.plot)
+bart.step <- function(xdata, ydata,
+                      iter.step=100, tree.step=10,
+                      iter.plot=100,
+                      full=FALSE) {
+
+  if(full==TRUE){varimp.diag(xdata, ydata, iter=iter.plot)}
   vs <- variable.step(xdata, ydata, n.trees=tree.step, iter=iter.step)
   invisible(best.model <- bart(xdata[,vs], ydata, keeptrees=TRUE))
-  varimp(best.model, plots=TRUE)
-  
-  bart.auc(best.model)
-  
+  if(full==TRUE){varimp(best.model, plots=TRUE)}
+  if(full==TRUE) {summary(best.model, plots=TRUE)} else 
+                 {summary(best.model, plots=FALSE)}
   invisible(best.model)
 }
