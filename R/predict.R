@@ -46,9 +46,10 @@ predict2.bart <- function(object,
         pred.summary <- dfextract(pred, quant=quantiles)
         input.str[[i]] <- pred.summary
         if(i==1) {end_time <- Sys.time()
-                  print('Estimated time to total prediction (mins):') 
-                  print(length(input.str)*as.numeric(end_time - start_time)/60)}
-        pb <- txtProgressBar(min = 0, max = length(input.str), style = 3)
+                  cat('Estimated time to total prediction (mins):\n') 
+                  cat(length(input.str)*as.numeric(end_time - start_time)/60)
+                  cat('\n')
+                  pb <- txtProgressBar(min = 0, max = length(input.str), style = 3)}
         setTxtProgressBar(pb, i)
     }
     if(length(quantiles)==0) {

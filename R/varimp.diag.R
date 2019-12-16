@@ -22,10 +22,14 @@ varimp.diag <- function(x.data, y.data, iter=50) {
     sink(tempfile())
     on.exit(sink())
     invisible(force(x))
-  }  # THANKS HADLEY
+  }  # THANKS HADLEY 4 THIS CODE :) 
 
 
   for (n.trees in c(10, 20, 50, 100, 150, 200)) {
+    
+    cat(paste('\n', n.trees, 'tree models:', iter, 'iterations\n'))
+    pb <- txtProgressBar(min = 0, max = iter, style = 3)
+    
     for(index in 1:iter) {
       quiet(model.j <- bart(x.data[,varnums], y.data, ntree = n.trees, keeptrees=TRUE))
 
@@ -35,12 +39,12 @@ varimp.diag <- function(x.data, y.data, iter=50) {
       } else {
         vi.j.df[,index+1] <- vi.j[,2]
       }
+      setTxtProgressBar(pb, index)
     }
     vi.j <- data.frame(vi.j.df[,1],
                        rowMeans(vi.j.df[,-1]))
 
     if(n.trees==10) { vi <- vi.j } else {  vi <- cbind(vi,vi.j[,2])  }
-    print(n.trees)
   }
 
   colnames(vi) <- c('variable','10','20','50','100','150','200')
