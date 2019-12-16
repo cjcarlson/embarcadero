@@ -6,12 +6,12 @@ Description: A convenience tool package for running and analyzing species distri
 License: CC0
 Encoding: UTF-8
 LazyData: true
-Depends: raster, dbarts, Metrics, tidyverse, dismo, ROCR, patchwork, cowplot,
-        velox, ggpubr, matrixStats, data.table
+Depends: raster, dbarts, Metrics, tidyverse, dismo, ROCR, patchwork,
+        cowplot, velox, ggpubr, matrixStats, data.table
 RoxygenNote: 6.1.1
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2019-10-15 05:49:17 UTC; cjcar
+Packaged: 2019-12-16 15:51:00 UTC; cjcar
 Author: Colin Carlson [aut, cre]
 Maintainer: Colin Carlson <cjc322@georgetown.edu>
