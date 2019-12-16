@@ -1,0 +1,45 @@
+
+---
+title: "Using BART with a virtual species!"
+output: pdf_document
+vignette: >
+  %\VignetteIndexEntry{virtualbart}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+  
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+suppressMessages(library(tidyverse))
+```
+
+
+# Getting Started
+
+So you're interested in using \texttt{embarcadero} to do species distribution modeling with Bayesian additive regression trees! That's great. BARTs are a powerful way to do machine learning and, while not a new method per se, they are very new for SDMs. 
+
+Most of the core functionality of \texttt{embarcadero} is actually a wrapper for \texttt{dbarts}, which runs the actual BART fitting process. This vignete will show you
+
+1. How to run BARTs
+1. Variable importance measures
+1. Automated variable selection
+1. Partial dependence plots
+1. Visualizing the posterior distribution
+
+There's also just going to be some general comments on the process of using BARTs, the challenges to working with them, and some things that are hopefully coming next.
+
+
+```{r setup, echo=FALSE}
+library(embarcadero)
+library(velox)
+set.seed(12345)
+```
+
+Doors are closing; please stand clear of the doors.
+
+# Mapping Hyalomma
