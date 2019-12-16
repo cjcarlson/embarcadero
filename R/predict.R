@@ -19,7 +19,6 @@ predict2.bart <- function(object,
                      inputstack,
                      splitby=1,
                      quantiles=c()) {
-  invisible()
   
   xnames <- attr(object$fit$data@x, "term.labels")
   if(all(xnames %in% names(inputstack))) {
