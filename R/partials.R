@@ -45,7 +45,7 @@
 #'
 
 partial <- function(model, x.vars=NULL, equal=TRUE, smooth=1,
-                    ci=TRUE, trace=TRUE,
+                    ci=TRUE, ciwidth=0.95, trace=TRUE,
                     transform=TRUE, panels=FALSE) {
   
   # A couple errors in case I'm Idiot

@@ -2,7 +2,7 @@
 #'
 #' @description
 #'
-#' The automated stepwise variable set reduction algorithm. It starts with the full variable set, runs a given number of models (iter) with a given number of trees (n.trees), and eliminates the variable with the worst contribution. It does this until there are only three left, and charts the RMSE of each model. Then it finally recommends the model with the lowest RMSE.
+#' The automated stepwise variable set reduction algorithm. It starts with the full variable set, runs a given number of models (iter) with a given number of trees (n.trees), and eliminates the variable with the lowest importance. It does this until there are only three left, and charts the RMSE of each model. Then it finally recommends the model with the lowest RMSE.
 #' 
 #' This is probably mostly useful as an internal part of bart.var, but if you *just* wanted to pull out which variables mattered and not the actual models, you could use this function to do so.
 #'

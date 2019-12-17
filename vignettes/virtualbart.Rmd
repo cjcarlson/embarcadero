@@ -35,12 +35,12 @@ There's also just going to be some general comments on the process of using BART
 
 If you want to install, do it using devtools for now:
 
-```{r setup, echo=FALSE}
+```{r setup, echo=TRUE}
 #devtools::install_github('cjcarlson/embarcadero')
-library(embarcadero)
-library(NLMR)
+library(embarcadero, quietly = T)
+library(NLMR, quietly = T)
 library(raster, quietly = T)
-library(virtualspecies)
+library(virtualspecies, quietly = T)
 set.seed(12345)
 ```
 
@@ -104,7 +104,7 @@ sdm <- bart(y.train=occ.df[,'Observed'],
             keeptrees = TRUE) # It's very important this is set to TRUE
 
 # Predict the species distribution!
-map <- predict(sdm, climate, splitby=5)
+map <- predict(sdm, climate)
 
 # How's it look?
 par(mfrow=c(1,2))
@@ -147,7 +147,7 @@ OK. We have a good-looking model. What's inside?
 # How good is it?
 summary(sdm) 
 
-map <- predict(sdm, climate, splitby=50, quantiles=c(0.01))
+map <- predict(sdm, climate, quantiles=c(0.01))
 
 # Check 
 par(mfrow=c(1,2))
