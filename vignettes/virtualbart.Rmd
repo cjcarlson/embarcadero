@@ -129,7 +129,7 @@ step.model <- variable.step(x.data=occ.df[,2:9],
 step.model
 
 # Retrain the model
-sdm <- bart(x.train=occ.df[, step.model], y.train=occ.df[,'Observed'],
+sdm <- bart.step(x.train=occ.df[, step.model], y.train=occ.df[,'Observed'],
             keeptrees = TRUE)
 
 # Predict the species distribution!

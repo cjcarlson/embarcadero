@@ -7,7 +7,7 @@
 variable.step(x.data, y.data, n.trees = 10, iter = 50)
 }
 \arguments{
-\item{n.trees}{How many trees to use in the variable set reduction. Should be a SMALL number for optimal performance (10 or 20 trees)}
+\item{n.trees}{How many trees to use in the variable set reduction. Should be a SMALL number (10 or 20 trees) in order to create the maximum disparity in variable importance between informative and uninformative predictors (recommendations taken from Chipman et al. 2010).}
 
 \item{iter}{How many BART models to run for each iteration of the stepwise reduction}
 
@@ -16,7 +16,7 @@ variable.step(x.data, y.data, n.trees = 10, iter = 50)
 \item{ydata}{A vector of outcomes (1/0)}
 }
 \value{
-Returns a list of the best variable set, and does some diagnostic plots along the way
+Returns a list of the best variable set, and does a diagnostic plot showing the RMSE for each model with a given number of variable drops.
 }
 \description{
 The automated stepwise variable set reduction algorithm. It starts with the full variable set, runs a given number of models (iter) with a given number of trees (n.trees), and eliminates the variable with the lowest importance. It does this until there are only three left, and charts the RMSE of each model. Then it finally recommends the model with the lowest RMSE.

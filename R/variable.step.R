@@ -8,10 +8,10 @@
 #'
 #' @param xdata A data frame of covariates
 #' @param ydata A vector of outcomes (1/0)
-#' @param n.trees How many trees to use in the variable set reduction. Should be a SMALL number for optimal performance (10 or 20 trees)
+#' @param n.trees How many trees to use in the variable set reduction. Should be a SMALL number (10 or 20 trees) in order to create the maximum disparity in variable importance between informative and uninformative predictors (recommendations taken from Chipman et al. 2010).
 #' @param iter How many BART models to run for each iteration of the stepwise reduction
 #' 
-#' @return Returns a list of the best variable set, and does some diagnostic plots along the way
+#' @return Returns a list of the best variable set, and does a diagnostic plot showing the RMSE for each model with a given number of variable drops.
 #' 
 #' @export
 #'
