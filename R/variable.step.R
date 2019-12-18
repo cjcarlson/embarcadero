@@ -36,7 +36,7 @@ variable.step <- function(x.data, y.data, n.trees=10, iter=50, quiet=FALSE) {
     print(noquote("Dropped:"))
     print(if(length(dropped.varlist)==0) {noquote("")} else {noquote(dropped.varlist)})
     
-    quiet <- function(x) {
+    quietly <- function(x) {
       sink(tempfile())
       on.exit(sink())
       invisible(force(x))
@@ -44,9 +44,9 @@ variable.step <- function(x.data, y.data, n.trees=10, iter=50, quiet=FALSE) {
     
     rmse.list <- c()
     
-    if(quiet==FALSE){pb <- txtProgressBar(min = 0, max = iter, style = 3)}
+    if(!quiet){pb <- txtProgressBar(min = 0, max = iter, style = 3)}
     for(index in 1:iter) {
-      quiet(model.j <- bart(x.data[,varnums], y.data, ntree = n.trees, keeptrees=TRUE))
+      quietly(model.j <- bart(x.data[,varnums], y.data, ntree = n.trees, keeptrees=TRUE))
       
       
       vi.j <- varimp(model.j)
@@ -66,7 +66,7 @@ variable.step <- function(x.data, y.data, n.trees=10, iter=50, quiet=FALSE) {
       true.c <- c(rep(1,length(pred.p)), rep(0,length(pred.a)))
       rmsej.i <- Metrics::rmse(true.c,pred.c)
       rmse.list <- c(rmse.list,rmsej.i)
-      if(quiet==FALSE){setTxtProgressBar(pb, index)}
+      if(!quiet){setTxtProgressBar(pb, index)}
     }
     
     vi.j <- data.frame(vi.j.df[,1],

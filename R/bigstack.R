@@ -13,7 +13,7 @@ bigstack <- function(stack, by, quiet=FALSE) {
   crs0 <- stack@crs
   
   if(!(class(stack)=='RasterStack')) { stop("Needs a raster stack dude") }
-  if(quiet==FALSE){pb <- txtProgressBar(style=3, min=0, max=nlayers(stack))}
+  if(!quiet){pb <- txtProgressBar(style=3, min=0, max=nlayers(stack))}
   for(i in 1:nlayers(stack)) {
     vx <- velox(stack[[i]])
     vx$aggregate(factor=c(by,by), aggtype='mean')
@@ -25,7 +25,7 @@ bigstack <- function(stack, by, quiet=FALSE) {
       v@crs <- crs0 
       bigstack <- stack(bigstack,v)
     }
-    if(quiet==FALSE){setTxtProgressBar(pb, i)}
+    if(!quiet){setTxtProgressBar(pb, i)}
   }  
   names(bigstack) <- names(stack)
   return(bigstack)

@@ -49,8 +49,8 @@ predict2.bart <- function(object,
                   cat('Estimated time to total prediction (mins):\n') 
                   cat(length(input.str)*as.numeric(end_time - start_time)/60)
                   cat('\n')
-                  if(quiet==FALSE){pb <- txtProgressBar(min = 0, max = length(input.str), style = 3)}}
-        if(quiet==FALSE){setTxtProgressBar(pb, i)}
+                  if(!quiet){pb <- txtProgressBar(min = 0, max = length(input.str), style = 3)}}
+        if(!quiet){setTxtProgressBar(pb, i)}
     }
     if(length(quantiles)==0) {
         pred.summary <- data.frame(means=unlist(input.str)) } else {

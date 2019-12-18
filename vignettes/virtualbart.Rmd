@@ -114,7 +114,7 @@ sdm <- bart(y.train=occ.df[,'Observed'],
 summary(sdm)
 
 # Predict the species distribution!
-map <- predict(sdm, climate)
+map <- predict(sdm, climate, quiet=TRUE)
 
 # How's it look?
 par(mfrow=c(1,2))
@@ -127,7 +127,7 @@ This is.... alright? We could probably do better. One of the easiest ways is to 
 ```{r}
 # A variable importance diagnostic. What's behaving well?
 # This takes a while to run normally! Drop the iter if you want a plot faster with more variance.
-varimp.diag(occ.df[,xnames], occ.df[,'Observed'], iter=50)
+varimp.diag(occ.df[,xnames], occ.df[,'Observed'], iter=50, quiet=TRUE)
 ```
 
 OK. This would suggest that some of the variables, like x5 and x7, are less important while x3 and x4 are more important. But that doesn't give us a concrete list of what to drop. Luckily, embarcadero has a stepwise variable set reduction function. Let's run that, and then retrain the model.
@@ -135,14 +135,15 @@ OK. This would suggest that some of the variables, like x5 and x7, are less impo
 ```{r}
 # Stepwise variable set reduction
 step.model <- variable.step(x.data=occ.df[,xnames], 
-                            y.data=occ.df[,'Observed'])
+                            y.data=occ.df[,'Observed'],
+                            quiet=TRUE)
 step.model
 
 # Retrain the model
 sdm <- bart(x.train=occ.df[, step.model], y.train=occ.df[,'Observed'])
 
 # Predict the species distribution!
-map <- predict(sdm, climate)
+map <- predict(sdm, climate, quiet=TRUE)
 
 # How's it look?
 par(mfrow=c(1,2))
@@ -156,7 +157,7 @@ OK. We have a good-looking model. What's inside?
 # How good is it?
 summary(sdm) 
 
-map <- predict(sdm, climate, quantiles=c(0.025, 0.975))
+map <- predict(sdm, climate, quantiles=c(0.025, 0.975), quiet=TRUE)
 
 # Check 
 par(mfrow=c(1,2))
