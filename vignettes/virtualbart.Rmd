@@ -16,6 +16,8 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 suppressMessages(library(tidyverse))
+options(digits=2)
+
 ```
 
 
@@ -41,7 +43,7 @@ library(embarcadero, quietly = T)
 library(NLMR, quietly = T)
 library(raster, quietly = T)
 library(virtualspecies, quietly = T)
-set.seed(12345)
+set.seed(42)
 ```
 
 Doors are closing; please stand clear of the doors.
@@ -56,7 +58,8 @@ onelandscape <- function(x) {NLMR::nlm_gaussianfield(nrow = 150,
                                                      ncol = 150,
                                                      rescale = FALSE)}
 climate <- stack(lapply(c(1:8), onelandscape))
-names(climate) <- c('x1','x2','x3','x4','x5','x6','x7','x8')
+xnames <- c('x1','x2','x3','x4','x5','x6','x7','x8')
+names(climate) <- xnames
 
 plot(climate[[1]],main='An imaginary variable')
 ```
@@ -79,7 +82,8 @@ random.sp <- generateRandomSp(climate[[1:4]],
 
 sp.points <- sampleOccurrences(random.sp,
                                n=250,
-                               type = 'presence-absence')
+                               type = 'presence-absence',
+                               detection.probability = 0.9)
 
 # Extract the associated climate values
 
@@ -98,10 +102,16 @@ Alright. Now that we have the dataset, let's get to modeling!
 We could easily throw all our data in one model, run it on defaults, make a map, and never think about it again. There's no laws against it.
 
 ```{r}
+# Check out the data structure
+head(occ.df)
+
 # Train the model
 sdm <- bart(y.train=occ.df[,'Observed'],
-            x.train=occ.df[,c(2:9)],
+            x.train=occ.df[,xnames],
             keeptrees = TRUE) # It's very important this is set to TRUE
+
+# Model diagnostics
+summary(sdm)
 
 # Predict the species distribution!
 map <- predict(sdm, climate)
@@ -117,19 +127,19 @@ This is.... alright? We could probably do better. One of the easiest ways is to 
 ```{r}
 # A variable importance diagnostic. What's behaving well?
 # This takes a while to run normally! Drop the iter if you want a plot faster with more variance.
-varimp.diag(occ.df[,2:9], occ.df[,'Observed'], iter=50)
+varimp.diag(occ.df[,xnames], occ.df[,'Observed'], iter=50)
 ```
 
 OK. This would suggest that some of the variables, like x5 and x7, are less important while x3 and x4 are more important. But that doesn't give us a concrete list of what to drop. Luckily, embarcadero has a stepwise variable set reduction function. Let's run that, and then retrain the model.
 
 ```{r}
 # Stepwise variable set reduction
-step.model <- variable.step(x.data=occ.df[,2:9], 
+step.model <- variable.step(x.data=occ.df[,xnames], 
                             y.data=occ.df[,'Observed'])
 step.model
 
 # Retrain the model
-sdm <- bart.step(xdata=occ.df[, step.model], ydata=occ.df[,'Observed'])
+sdm <- bart(x.train=occ.df[, step.model], y.train=occ.df[,'Observed'])
 
 # Predict the species distribution!
 map <- predict(sdm, climate)
@@ -146,11 +156,35 @@ OK. We have a good-looking model. What's inside?
 # How good is it?
 summary(sdm) 
 
-map <- predict(sdm, climate, quantiles=c(0.01))
+map <- predict(sdm, climate, quantiles=c(0.025, 0.975))
 
 # Check 
 par(mfrow=c(1,2))
 plot(map[[1]], main='Predicted')
 plot(random.sp$pa.raster, main='Truth')
 #plot(values(map) ~ values(random.sp$pa.raster))
+```
+
+OK. This part involves comparing partials to gbm.
+
+```{r}
+partial(sdm, x.vars=c('x4'),
+        smooth=5,
+        equal=TRUE,
+        trace=FALSE)
+```
+
+gbm time
+
+```{r}
+gbm1 <- gbm.step(data=occ.df, gbm.x = 2:5, gbm.y = 1, 
+                 family = "bernoulli",
+                 tree.complexity = 5, 
+                 learning.rate = 0.01, 
+                 bag.fraction = 0.5)
+par(mfrow=c(1,1))
+gbm.plot(gbm1, variable.no=4, rug=TRUE,
+         #main="BRT partial",
+         plot.layout=c(1,1))
+
 ```
