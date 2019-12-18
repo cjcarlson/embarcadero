@@ -4,7 +4,7 @@
 \alias{variable.step}
 \title{Automatic variable selection}
 \usage{
-variable.step(x.data, y.data, n.trees = 10, iter = 50)
+variable.step(x.data, y.data, n.trees = 10, iter = 50, quiet = FALSE)
 }
 \arguments{
 \item{n.trees}{How many trees to use in the variable set reduction. Should be a SMALL number (10 or 20 trees) in order to create the maximum disparity in variable importance between informative and uninformative predictors (recommendations taken from Chipman et al. 2010).}

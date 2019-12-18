@@ -5,7 +5,7 @@
 \alias{varimp.plot}
 \title{Diagnostic variable selection plot}
 \usage{
-varimp.diag(x.data, y.data, iter = 50)
+varimp.diag(x.data, y.data, iter = 50, quiet = FALSE)
 }
 \arguments{
 \item{iter}{How many BART models to run for each of (10, 20, 50, 100, 150, 200) tree models}

@@ -5,10 +5,10 @@
 \title{Full-service variable selection}
 \usage{
 bart.step(xdata, ydata, iter.step = 100, tree.step = 10,
-  iter.plot = 100, full = FALSE)
+  iter.plot = 100, full = FALSE, quiet = FALSE)
 
 bart.step(xdata, ydata, iter.step = 100, tree.step = 10,
-  iter.plot = 100, full = FALSE)
+  iter.plot = 100, full = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{xdata}{A data frame of covariates}

@@ -21,7 +21,8 @@
 bart.step <- function(xdata, ydata,
                       iter.step=100, tree.step=10,
                       iter.plot=100,
-                      full=FALSE) {
+                      full=FALSE,
+                      quiet=FALSE) {
 
   if(full==TRUE){varimp.diag(xdata, ydata, iter=iter.plot)}
   vs <- variable.step(xdata, ydata, n.trees=tree.step, iter=iter.step)

@@ -17,7 +17,7 @@
 #'
 #'
 
-variable.step <- function(x.data, y.data, n.trees=10, iter=50) {
+variable.step <- function(x.data, y.data, n.trees=10, iter=50, quiet=FALSE) {
   
   nvars <- ncol(x.data)
   varnums <- c(1:nvars)
@@ -44,7 +44,7 @@ variable.step <- function(x.data, y.data, n.trees=10, iter=50) {
     
     rmse.list <- c()
     
-    pb <- txtProgressBar(min = 0, max = iter, style = 3)
+    if(quiet==FALSE){pb <- txtProgressBar(min = 0, max = iter, style = 3)}
     for(index in 1:iter) {
       quiet(model.j <- bart(x.data[,varnums], y.data, ntree = n.trees, keeptrees=TRUE))
       
@@ -66,7 +66,7 @@ variable.step <- function(x.data, y.data, n.trees=10, iter=50) {
       true.c <- c(rep(1,length(pred.p)), rep(0,length(pred.a)))
       rmsej.i <- Metrics::rmse(true.c,pred.c)
       rmse.list <- c(rmse.list,rmsej.i)
-      setTxtProgressBar(pb, index)
+      if(quiet==FALSE){setTxtProgressBar(pb, index)}
     }
     
     vi.j <- data.frame(vi.j.df[,1],

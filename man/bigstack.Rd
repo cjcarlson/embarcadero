@@ -4,7 +4,7 @@
 \alias{bigstack}
 \title{Big stack}
 \usage{
-bigstack(stack, by)
+bigstack(stack, by, quiet = FALSE)
 }
 \arguments{
 \item{stack}{A raster stack. It can be a one-layer stack if you'd like, but then just use velox's $aggregate function.}

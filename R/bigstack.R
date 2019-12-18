@@ -9,12 +9,11 @@
 #' 
 #' @export
 
-bigstack <- function(stack, by) {
+bigstack <- function(stack, by, quiet=FALSE) {
   crs0 <- stack@crs
   
   if(!(class(stack)=='RasterStack')) { stop("Needs a raster stack dude") }
-  pb <- txtProgressBar(style=3, min=0, max=nlayers(stack))
-  setTxtProgressBar(pb, 0)
+  if(quiet==FALSE){pb <- txtProgressBar(style=3, min=0, max=nlayers(stack))}
   for(i in 1:nlayers(stack)) {
     vx <- velox(stack[[i]])
     vx$aggregate(factor=c(by,by), aggtype='mean')
@@ -26,7 +25,7 @@ bigstack <- function(stack, by) {
       v@crs <- crs0 
       bigstack <- stack(bigstack,v)
     }
-    setTxtProgressBar(pb, i)
+    if(quiet==FALSE){setTxtProgressBar(pb, i)}
   }  
   names(bigstack) <- names(stack)
   return(bigstack)
