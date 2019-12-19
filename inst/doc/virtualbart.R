@@ -1,16 +1,4 @@
-
----
-title: "Using BART with a virtual species!"
-output: pdf_document
-vignette: >
-  %\VignetteIndexEntry{virtualbart}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  chunk_output_type: console
----
-  
-```{r, include = FALSE}
+## ---- include = FALSE----------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -18,26 +6,8 @@ knitr::opts_chunk$set(
 suppressMessages(library(tidyverse))
 options(digits=2)
 
-```
 
-
-# Getting Started
-
-So you're interested in using \texttt{embarcadero} to do species distribution modeling with Bayesian additive regression trees! That's great. BARTs are a powerful way to do machine learning and, while not a new method per se, they are very new for SDMs. 
-
-Most of the core functionality of \texttt{embarcadero} is actually a wrapper for \texttt{dbarts}, which runs the actual BART fitting process. This vignete will show you
-
-1. How to run BARTs
-1. Variable importance measures
-1. Automated variable selection
-1. Partial dependence plots
-1. Visualizing the posterior distribution
-
-There's also just going to be some general comments on the process of using BARTs, the challenges to working with them, and some things that are hopefully coming next.
-
-If you want to install, do it using devtools for now:
-
-```{r setup, echo=TRUE}
+## ----setup, echo=TRUE----------------------------------------------------
 #devtools::install_github('cjcarlson/embarcadero')
 library(embarcadero, quietly = T)
 library(dismo, quietly=T)
@@ -45,16 +15,8 @@ library(NLMR, quietly = T)
 library(raster, quietly = T)
 library(virtualspecies, quietly = T)
 set.seed(42)
-```
 
-Doors are closing; please stand clear of the doors.
-
-# Creating the virtual species
-
-First, let's create an imaginary landscape. We do this using the NLMR package:
-
-
-```{r}
+## ------------------------------------------------------------------------
 onelandscape <- function(x) {NLMR::nlm_gaussianfield(nrow = 150,
                                                      ncol = 150,
                                                      rescale = FALSE)}
@@ -63,11 +25,8 @@ xnames <- c('x1','x2','x3','x4','x5','x6','x7','x8')
 names(climate) <- xnames
 
 plot(climate[[1]],main='An imaginary variable')
-```
 
-Next, let's make a species using the 'virtualspecies' package. Our imaginary species will only responds to variables 1-4, making variables 5-8 uninformative predictors (hopefully our model will drop them):
-
-```{r}
+## ------------------------------------------------------------------------
 
 # Generate the species' climatic niche
 
@@ -96,13 +55,8 @@ occ.df <- cbind(sp.points$sample.points,
 
 occ.df <- occ.df[,-c(1:3)]
 
-```
 
-Alright. Now that we have the dataset, let's get to modeling!
-
-We could easily throw all our data in one model, run it on defaults, make a map, and never think about it again. There's no laws against it.
-
-```{r}
+## ------------------------------------------------------------------------
 # Check out the data structure
 head(occ.df)
 
@@ -121,19 +75,13 @@ map <- predict(sdm, climate, quiet=TRUE)
 par(mfrow=c(1,2))
 plot(random.sp$pa.raster, main='True distribution')
 plot(map, main='Predicted probability')
-```
 
-This is.... alright? We could probably do better. One of the easiest ways is to cut some variables we don't think are performing well. In BART, pushing the models towards a smaller number of trees forces the variables to compete a bit, and preferentially upweights the better ones. We can plot that!
-
-```{r}
+## ------------------------------------------------------------------------
 # A variable importance diagnostic. What's behaving well?
 # This takes a while to run normally! Drop the iter if you want a plot faster with more variance.
 varimp.diag(occ.df[,xnames], occ.df[,'Observed'], iter=50, quiet=TRUE)
-```
 
-OK. This would suggest that some of the variables, like x5 and x7, are less important while x3 and x4 are more important. But that doesn't give us a concrete list of what to drop. Luckily, embarcadero has a stepwise variable set reduction function. Let's run that, and then retrain the model.
-
-```{r}
+## ------------------------------------------------------------------------
 # Stepwise variable set reduction
 step.model <- variable.step(x.data=occ.df[,xnames], 
                             y.data=occ.df[,'Observed'],
@@ -151,11 +99,8 @@ map <- predict(sdm, climate, quiet=TRUE)
 par(mfrow=c(1,2))
 plot(random.sp$pa.raster, main='True distribution')
 plot(map, main='Predicted probability')
-```
 
-OK. We have a good-looking model. What's inside?
-
-```{r}
+## ------------------------------------------------------------------------
 # How good is it?
 summary(sdm) 
 
@@ -166,20 +111,14 @@ par(mfrow=c(1,2))
 plot(map[[1]], main='Predicted')
 plot(random.sp$pa.raster, main='Truth')
 #plot(values(map) ~ values(random.sp$pa.raster))
-```
 
-OK. This part involves comparing partials to gbm.
-
-```{r}
+## ------------------------------------------------------------------------
 partial(sdm, x.vars=c('x4'),
         smooth=5,
         equal=TRUE,
         trace=FALSE)
-```
 
-gbm time
-
-```{r}
+## ------------------------------------------------------------------------
 gbm1 <- gbm.step(data=occ.df, gbm.x = 2:5, gbm.y = 1, 
                  family = "bernoulli",
                  tree.complexity = 5, 
@@ -190,4 +129,4 @@ gbm.plot(gbm1, variable.no=4, rug=TRUE,
          #main="BRT partial",
          plot.layout=c(1,1))
 
-```
+
