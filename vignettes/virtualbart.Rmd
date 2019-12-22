@@ -1,13 +1,13 @@
 
 ---
 title: "Using BART with a virtual species!"
-output: pdf_document
-vignette: >
-  %\VignetteIndexEntry{virtualbart}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
+output:
+  html_document:
+    df_print: paged
+editor_options:
   chunk_output_type: console
+vignette: |
+  %\VignetteIndexEntry{virtualbart} %\VignetteEncoding{UTF-8} %\VignetteEngine{knitr::rmarkdown}
 ---
   
 ```{r, include = FALSE}
@@ -100,6 +100,8 @@ occ.df <- occ.df[,-c(1:3)]
 
 Alright. Now that we have the dataset, let's get to modeling!
 
+# Building a basic BART model
+
 We could easily throw all our data in one model, run it on defaults, make a map, and never think about it again. There's no laws against it.
 
 ```{r}
@@ -123,7 +125,29 @@ plot(random.sp$pa.raster, main='True distribution')
 plot(map, main='Predicted probability')
 ```
 
-This is.... alright? We could probably do better. One of the easiest ways is to cut some variables we don't think are performing well. In BART, pushing the models towards a smaller number of trees forces the variables to compete a bit, and preferentially upweights the better ones. We can plot that!
+Neat! We have a good-looking model. Can we put a few summary stats on that??
+
+```{r}
+# How good is it?
+summary(sdm) 
+```
+
+Let's compare what the thresholded model looks like:
+
+```{r}
+# How's it look?
+par(mfrow=c(1,2))
+plot(random.sp$pa.raster, main='True distribution')
+plot(map>0.42, main='Prediced distribution')
+```
+
+OK! Not bad.
+
+## What's going on inside a BART model?
+
+# Variable selection 
+
+We could probably do better. One of the easiest ways is to cut some variables we don't think are performing well. In BART, pushing the models towards a smaller number of trees forces the variables to compete a bit, and preferentially upweights the better ones. We can plot that!
 
 ```{r}
 # A variable importance diagnostic. What's behaving well?
@@ -153,20 +177,7 @@ plot(random.sp$pa.raster, main='True distribution')
 plot(map, main='Predicted probability')
 ```
 
-OK. We have a good-looking model. What's inside?
-
-```{r}
-# How good is it?
-summary(sdm) 
-
-map <- predict(sdm, climate, quantiles=c(0.025, 0.975), quiet=TRUE)
-
-# Check 
-par(mfrow=c(1,2))
-plot(map[[1]], main='Predicted')
-plot(random.sp$pa.raster, main='Truth')
-#plot(values(map) ~ values(random.sp$pa.raster))
-```
+# Partial dependence plots with BART
 
 OK. This part involves comparing partials to gbm.
 
