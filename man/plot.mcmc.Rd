@@ -48,6 +48,7 @@ occ.df <- cbind(sp.points$sample.points,
                 raster::extract(climate, occ))
 occ.df <- occ.df[,-c(1:3)]
 
+### The actual example 
 
 sdm <- bart(y.train=occ.df[,'Observed'],
             x.train=occ.df[,xnames],
@@ -63,7 +64,7 @@ sdm <- bart(y.train=occ.df[,'Observed'],
             
 plot.mcmc(sdm, climate, iter=50)
 
-If you want to animate it:
+###If you want to animate it:
 
 library(animation)
 

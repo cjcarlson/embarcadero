@@ -106,7 +106,8 @@ spartial <- function(model, envs, x.vars=NULL,
       
       lyrtmp <- envs[[pd$xlbs[[i]]]]
       lyrtr <- raster::reclassify(lyrtmp,as.matrix(dfbin))
-      plot(lyrtr)
+      plot(lyrtr, 
+           box=F, axes=F)
       
       if(save==TRUE) {if(exists("pdstack")) {pdstack <- c(pdstack, lyrtr)} else {pdstack <- c(lyrtr)} }
       
@@ -128,7 +129,8 @@ spartial <- function(model, envs, x.vars=NULL,
       
       lyrtr <- raster::reclassify(lyrtmp,xmat,
                                    include.lowest=TRUE)
-      plot(lyrtr)
+      plot(lyrtr, 
+           box=F, axes=F)
       
       if(save==TRUE) {if(exists("pdstack")) {pdstack <- c(pdstack, lyrtr)} else {pdstack <- c(lyrtr)} }
     }
