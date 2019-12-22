@@ -16,6 +16,7 @@ __What does embarcadero do?__
 
 This package is basically a wrapper around 'dbarts'  with a few tools
 - spatial prediction 
+- visualization of how posterior draws learn over time 
 - variable importance 
 - stepwise variable elimination
 - AUC calculation 
