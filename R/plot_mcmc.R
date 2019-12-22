@@ -37,7 +37,7 @@
 #'                 raster::extract(climate, occ))
 #' occ.df <- occ.df[,-c(1:3)]
 #' 
-### The actual example 
+#' ### The actual example 
 #' 
 #' sdm <- bart(y.train=occ.df[,'Observed'],
 #'             x.train=occ.df[,xnames],
@@ -53,7 +53,7 @@
 #'             
 #' plot.mcmc(sdm, climate, iter=50)
 #' 
-#' If you want to animate it:
+#' ###If you want to animate it:
 #' 
 #' library(animation)
 #' 
@@ -78,12 +78,12 @@ plot.mcmc <- function(object, inputstack, iter=100, wait=0.1, quiet=FALSE) {
   whichvals <- which(complete.cases(input.matrix))
   input.matrix <- input.matrix[complete.cases(input.matrix),]
   
-  cat('Generating the posterior predictions (takes a second) \n')
+  cat('\n Generating the posterior predictions (takes a second) \n')
   pred <- dbarts:::predict.bart(object, input.matrix)
   
-  cat('Building raster stack (can be slow) \n')
+  cat('\n Generating plots \n')
   if(!quiet){pb <- txtProgressBar(min = 0, max = iter, style = 3)}
-  for(i in 1:iter){
+  for (i in 1:iter){
     output.m <- pnorm(t(matrix(pred[i,],
                                nrow = ncol(inputstack),
                                ncol = nrow(inputstack))))
@@ -91,21 +91,11 @@ plot.mcmc <- function(object, inputstack, iter=100, wait=0.1, quiet=FALSE) {
                 xmn=xmin(inputstack[[1]]), xmx=xmax(inputstack[[1]]),
                 ymn=ymin(inputstack[[1]]), ymx=ymax(inputstack[[1]]),
                 crs=inputstack[[1]]@crs)
-    if(i==1){r1 <- stack(r)} else {r1 <- stack(r1, r)}
-    if(!quiet){setTxtProgressBar(pb, i)}
-  }
-  
-  mapper <- function(i) {
+    if(i==1){r1 <- r} else {r1 <- sum(r1, r)}
     par(mfrow=c(1,2))
     par(mar=c(2,1,2,5))
-    plot(r1[[i]], box=F, axes=F, zlim=c(0,1), main=paste('Iter',i))
-    plot(mean(r1[[1:i]]), box=F, axes=F, zlim=c(0,1), main='Mean')
-  }
-  
-  cat('\n Generating plots \n')
-  if(!quiet){pb <- txtProgressBar(min = 0, max = iter, style = 3)}
-  for (i in 1:iter){
-    plt <- mapper(i)
+    plot(r, box=F, axes=F, zlim=c(0,1), main=paste('Iter',i))
+    plot(r1/i, box=F, axes=F, zlim=c(0,1), main='Mean')
     Sys.sleep(0.1)
     if(!quiet){setTxtProgressBar(pb, i)}
   }
