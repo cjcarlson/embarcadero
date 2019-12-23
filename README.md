@@ -15,12 +15,12 @@ No, there is nothing new under the sun. [Yen et al.](https://onlinelibrary.wiley
 __What does embarcadero do?__
 
 This package is basically a wrapper around 'dbarts'  with a few tools
+- basic model summary statistics and diagnostics 
 - spatial prediction 
+- credible interval draws from the posterior distribution
 - visualization of how posterior draws learn over time 
-- variable importance 
+- variable importance measures
 - stepwise variable elimination
-- AUC calculation 
-- a 95% credible interval from the posterior distribution
 - automatic Nice Plots for partials, including multiple ways to visualize posterior draws
 - spatial projection of partials ("spartials")
 
