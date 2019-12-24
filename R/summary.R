@@ -49,13 +49,13 @@ summary.bart <- function(object, plots=TRUE) {
       geom_abline(intercept=0,slope=1,col='red')+ 
       theme_classic()
 
-    pnormdf <- data.frame(pnorm = colMeans(pnorm(sdm$yhat.train)))
+    pnormdf <- data.frame(pnorm = colMeans(pnorm(object$yhat.train)))
     g2 <- ggplot(pnormdf, aes(pnorm)) + geom_histogram(stat='bin', binwidth=0.05) + 
       ylab('Predicted probability') + ggtitle('Fitted values') + 
       xlab('Predicted probability') + 
       theme_classic()
     
-    #hist(pnorm(sdm$yhat.train), xlab='Predicted y', main='Fitted values')
+    #hist(pnorm(object$yhat.train), xlab='Predicted y', main='Fitted values')
     
     g3 <- ggplot(tss.df, aes(x=alpha,y=tss)) + geom_line() + 
       ggtitle('Threshold-performance curve') + 
@@ -64,9 +64,9 @@ summary.bart <- function(object, plots=TRUE) {
       geom_vline(xintercept=thresh,col='red')+ 
       theme_classic()
     
-    obsf <- data.frame(fitted=pnorm(colMeans(sdm$yhat.train)),
-                       classified=as.numeric(pnorm(colMeans(sdm$yhat.train))>thresh),
-                       observed=sdm$fit$data@y)
+    obsf <- data.frame(fitted=pnorm(colMeans(object$yhat.train)),
+                       classified=as.numeric(pnorm(colMeans(object$yhat.train))>thresh),
+                       observed=object$fit$data@y)
     
     g4 <- ggplot(obsf, aes(x=fitted, y=factor(observed), 
                      fill=factor(classified), color=factor(classified))) + 
