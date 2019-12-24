@@ -1,6 +1,6 @@
 Package: embarcadero
 Title: Species distribution models with BART
-Version: 1.0.1.0001
+Version: 1.0.1.0042
 Authors@R: person("Colin", "Carlson", email = "cjc322@georgetown.edu", role = c("aut", "cre"))
 Description: A convenience tool package for running and analyzing species distribution models with Bayesian additive regression trees. 
 License: CC0
@@ -12,6 +12,6 @@ RoxygenNote: 6.1.1
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2019-12-22 22:35:26 UTC; cjcar
+Packaged: 2019-12-24 20:12:51 UTC; cjcar
 Author: Colin Carlson [aut, cre]
 Maintainer: Colin Carlson <cjc322@georgetown.edu>
