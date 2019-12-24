@@ -1,6 +1,6 @@
 ---
 title: "Using BART with a virtual species!"
-output: rmarkdown::html_vignette
+output: rmarkdown::html_document
 vignette: >
   %\VignetteIndexEntry{virtualbart} 
   %\VignetteEncoding{UTF-8} 
