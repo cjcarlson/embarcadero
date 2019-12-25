@@ -21,10 +21,12 @@
 bart.step <- function(xdata, ydata,
                       iter.step=100, tree.step=10,
                       iter.plot=100,
-                      full=FALSE) {
+                      full=FALSE,
+                      quiet=FALSE) {
 
-  if(full==TRUE){varimp.diag(xdata, ydata, iter=iter.plot)}
-  vs <- variable.step(xdata, ydata, n.trees=tree.step, iter=iter.step)
+  quiet2 <- quiet
+  if(full==TRUE){varimp.diag(xdata, ydata, iter=iter.plot, quiet=quiet2)}
+  vs <- variable.step(xdata, ydata, n.trees=tree.step, iter=iter.step, quiet=quiet2)
   invisible(best.model <- bart(xdata[,vs], ydata, keeptrees=TRUE))
   if(full==TRUE){varimp(best.model, plots=TRUE)}
   if(full==TRUE) {summary(best.model, plots=TRUE)} else 
