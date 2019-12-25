@@ -29,7 +29,9 @@ bart.step <- function(xdata, ydata,
   vs <- variable.step(xdata, ydata, n.trees=tree.step, iter=iter.step, quiet=quiet2)
   invisible(best.model <- bart(xdata[,vs], ydata, keeptrees=TRUE))
   if(full==TRUE){varimp(best.model, plots=TRUE)}
-  if(full==TRUE) {summary(best.model, plots=TRUE)} else 
-                 {summary(best.model, plots=FALSE)}
+  if(full==TRUE) {p <- summary(best.model, plots=TRUE)
+                  print(p)} else 
+                  {p <- summary(best.model, plots=FALSE)
+                  print(p)}
   invisible(best.model)
-}
+}  

@@ -8,6 +8,7 @@
 #' @param inputstack An object of class RasterStack
 #' @param splitby If set to a value higher than 1, will split your dataset into approximately n divisible chunks 
 #' @param quantiles Include the extraction of quantiles (e.g. 5\% and 95\% credible interval) from the posterior
+#' @param quiet No progress bars
 #' 
 #' @export
 #'
