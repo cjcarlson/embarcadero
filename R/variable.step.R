@@ -6,8 +6,8 @@
 #' 
 #' This is probably mostly useful as an internal part of bart.var, but if you *just* wanted to pull out which variables mattered and not the actual models, you could use this function to do so.
 #'
-#' @param xdata A data frame of covariates
-#' @param ydata A vector of outcomes (1/0)
+#' @param x.data A data frame of covariates
+#' @param y.data A vector of outcomes (1/0)
 #' @param n.trees How many trees to use in the variable set reduction. Should be a SMALL number (10 or 20 trees) in order to create the maximum disparity in variable importance between informative and uninformative predictors (recommendations taken from Chipman et al. 2010).
 #' @param iter How many BART models to run for each iteration of the stepwise reduction
 #' 

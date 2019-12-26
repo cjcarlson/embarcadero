@@ -4,8 +4,8 @@
 #'
 #' When BART is run with a small number of trees it tends to up-select variables that contribute the most meaningfully, and under-selects variables that have no relevance or contribute only marginally. As the number of trees, this pattern becomes less visible, as it overfits to less useful variables. Plotting this is a useful way of identifying which variables should be dropped - those that have the most visible increase relative to number of trees are performing the poorest.
 #'
-#' @param xdata A data frame of covariates
-#' @param ydata A vector of outcomes (1/0)
+#' @param x.data A data frame of covariates
+#' @param y.data A vector of outcomes (1/0)
 #' @param iter How many BART models to run for each of (10, 20, 50, 100, 150, 200) tree models
 #'
 #' @export 

@@ -4,8 +4,8 @@
 #'
 #' A wrapper for a few core functions, including a few diagnostic plots of variable importance, and the automated stepwise variable set reduction algorithm. 
 #'
-#' @param xdata A data frame of covariates
-#' @param ydata A vector of outcomes (1/0)
+#' @param x.data A data frame of covariates
+#' @param y.data A vector of outcomes (1/0)
 #' @param iter.step How many BART models to run for each iteration of the stepwise reduction
 #' @param tree.step How many trees to use in the variable set reduction.Should be a SMALL number (10 or 20 trees) in order to create the maximum disparity in variable importance between informative and uninformative predictors (recommendations taken from Chipman et al. 2010).
 #' @param iter.plot How many iterations to use in the first diagnostic plot 
@@ -18,16 +18,16 @@
 #'
 #'
 
-bart.step <- function(xdata, ydata,
+bart.step <- function(x.data, y.data,
                       iter.step=100, tree.step=10,
                       iter.plot=100,
                       full=FALSE,
                       quiet=FALSE) {
 
   quiet2 <- quiet
-  if(full==TRUE){varimp.diag(xdata, ydata, iter=iter.plot, quiet=quiet2)}
-  vs <- variable.step(xdata, ydata, n.trees=tree.step, iter=iter.step, quiet=quiet2)
-  invisible(best.model <- bart(xdata[,vs], ydata, keeptrees=TRUE))
+  if(full==TRUE){varimp.diag(x.data, y.data, iter=iter.plot, quiet=quiet2)}
+  vs <- variable.step(x.data, y.data, n.trees=tree.step, iter=iter.step, quiet=quiet2)
+  invisible(best.model <- bart(x.data[,vs], y.data, keeptrees=TRUE))
   if(full==TRUE){varimp(best.model, plots=TRUE)}
   if(full==TRUE) {p <- summary(best.model, plots=TRUE)
                   print(p)} else 
