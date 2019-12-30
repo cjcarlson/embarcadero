@@ -38,7 +38,7 @@ devtools::install_github('cjcarlson/embarcadero')
 
 __How do I learn to use embarcadero__?
 
-The updated preprint (coming shortly) includes a bunch of code, and there's a new vignette included in the package that runs through all of the basic functionality using a virtual species. I've migrated the older, more advanced vignette - which is almost 40 pages and takes a good 6 hours to run on an older machine - to another repo (cjcarlson/pier39) and am in the process of updating it to be much clearer.
+The updated preprint (coming shortly) includes a bunch of code, and there's a new vignette included in the package that runs through all of the basic functionality using a virtual species. I've migrated the older, more advanced vignette - which is over 30 pages and takes a good 3 hours to run on an older machine - to another repo (cjcarlson/pier39) and am in the process of updating it to be much clearer.
 
 __How do I cite embarcadero__?
 
