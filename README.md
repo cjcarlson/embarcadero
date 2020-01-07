@@ -42,7 +42,7 @@ The updated preprint (coming shortly) includes a bunch of code, and there's a ne
 
 __How do I cite embarcadero__?
 
-Please cite [this](https://www.biorxiv.org/content/biorxiv/early/2019/09/19/774604.full.pdf) preprint for now. The paper is currently in revision at *Methods in Ecology and Evolution*!
+Please cite [this](https://www.biorxiv.org/content/10.1101/774604v2) preprint for now. The paper is currently in revision at *Methods in Ecology and Evolution*!
 
 __Can I help__?
 
