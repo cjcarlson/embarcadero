@@ -14,8 +14,15 @@
 
 varimp <- function(model, plots=FALSE) {
 
-  names <- attr(model$fit$data@x, "term.labels")
-  varimps <- colMeans(model$varcount/rowSums(model$varcount))
+  if(class(model)=='rbart') {
+    names <- attr(model$fit[[1]]$data@x, "term.labels")
+    varimps <- rowMeans(model$varcount/colSums(model$varcount))
+  }
+  if(class(model)=='bart') {
+    names <- attr(model$fit$data@x, "term.labels")
+    varimps <- colMeans(model$varcount/rowSums(model$varcount))
+  }
+  
   var.df <- data.frame(names, varimps)
 
   var.df$names <- factor(var.df$names)
