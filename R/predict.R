@@ -55,7 +55,7 @@ predict2.bart <- function(object,
   
   if(class(object)=='rbart') {
     if(class(ri.data)=='RasterLayer') {
-      input.matrix <- cbind(input.matrix,ri.data@values)
+      input.matrix <- cbind(input.matrix,values(ri.data))
     } else {
       input.matrix <- cbind(input.matrix,rep(ri.data, nrow(input.matrix)))
     }
