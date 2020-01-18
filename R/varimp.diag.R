@@ -31,7 +31,9 @@ varimp.diag <- function(x.data, y.data, ri.data=NULL, iter=50, quiet=FALSE) {
     if(!quiet){pb <- txtProgressBar(min = 0, max = iter, style = 3)}
     
     for(index in 1:iter) {
-      quietly(model.j <- bart(x.data[,varnums], y.data, ntree = n.trees, keeptrees=TRUE))
+      quietly(model.j <- bart.flex(x.data = x.data[,varnums], y.data = y.data, 
+                                   ri.data = ri.data,
+                                   n.trees = n.trees))
 
       vi.j <- varimp(model.j)
       if(index==1) {
