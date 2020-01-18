@@ -5,14 +5,14 @@
 \alias{varimp.plot}
 \title{Diagnostic variable selection plot}
 \usage{
-varimp.diag(x.data, y.data, iter = 50, quiet = FALSE)
+varimp.diag(x.data, y.data, ri.data = NULL, iter = 50, quiet = FALSE)
 }
 \arguments{
+\item{x.data}{A data frame of covariates}
+
+\item{y.data}{A vector of outcomes (1/0)}
+
 \item{iter}{How many BART models to run for each of (10, 20, 50, 100, 150, 200) tree models}
-
-\item{xdata}{A data frame of covariates}
-
-\item{ydata}{A vector of outcomes (1/0)}
 }
 \description{
 When BART is run with a small number of trees it tends to up-select variables that contribute the most meaningfully, and under-selects variables that have no relevance or contribute only marginally. As the number of trees, this pattern becomes less visible, as it overfits to less useful variables. Plotting this is a useful way of identifying which variables should be dropped - those that have the most visible increase relative to number of trees are performing the poorest.

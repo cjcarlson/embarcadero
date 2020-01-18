@@ -4,13 +4,13 @@
 \alias{bart.step}
 \title{Full-service variable selection}
 \usage{
-bart.step(xdata, ydata, iter.step = 100, tree.step = 10,
-  iter.plot = 100, full = FALSE)
+bart.step(x.data, y.data, iter.step = 100, tree.step = 10,
+  iter.plot = 100, full = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{xdata}{A data frame of covariates}
+\item{x.data}{A data frame of covariates}
 
-\item{ydata}{A vector of outcomes (1/0)}
+\item{y.data}{A vector of outcomes (1/0)}
 
 \item{iter.step}{How many BART models to run for each iteration of the stepwise reduction}
 

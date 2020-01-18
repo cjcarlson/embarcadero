@@ -7,13 +7,13 @@
 variable.step(x.data, y.data, n.trees = 10, iter = 50, quiet = FALSE)
 }
 \arguments{
+\item{x.data}{A data frame of covariates}
+
+\item{y.data}{A vector of outcomes (1/0)}
+
 \item{n.trees}{How many trees to use in the variable set reduction. Should be a SMALL number (10 or 20 trees) in order to create the maximum disparity in variable importance between informative and uninformative predictors (recommendations taken from Chipman et al. 2010).}
 
 \item{iter}{How many BART models to run for each iteration of the stepwise reduction}
-
-\item{xdata}{A data frame of covariates}
-
-\item{ydata}{A vector of outcomes (1/0)}
 }
 \value{
 Returns a list of the best variable set, and does a diagnostic plot showing the RMSE for each model with a given number of variable drops.

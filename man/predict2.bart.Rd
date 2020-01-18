@@ -15,6 +15,8 @@ predict2.bart(object, inputstack, splitby = 1, quantiles = c(),
 \item{splitby}{If set to a value higher than 1, will split your dataset into approximately n divisible chunks}
 
 \item{quantiles}{Include the extraction of quantiles (e.g. 5\% and 95\% credible interval) from the posterior}
+
+\item{quiet}{No progress bars}
 }
 \description{
 A predict() wrapper for combining BART models with spatial input data, to generate a Raster or RasterStack of predicted outputs.

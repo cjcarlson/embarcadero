@@ -1,10 +1,10 @@
 
 predict.re <- function (object, inputstack, splitby = 1, quantiles = c(), 
-                         quiet = FALSE, time, timevar, ranef=FALSE) {
+                         quiet = FALSE, ri.data, ri.name, ri.pred=FALSE) {
   
   xnames <- attr(object$fit[[1]]$data@x, "term.labels")
-  if (all(xnames %in% c(names(inputstack),timevar))) {
-    inputstack <- inputstack[[xnames[!(xnames==timevar)]]]
+  if (all(xnames %in% c(names(inputstack),ri.name))) {
+    inputstack <- inputstack[[xnames[!(xnames==ri.name)]]]
   } else {
     stop("Variable names of RasterStack don't match the requested names")
   }
@@ -12,23 +12,27 @@ predict.re <- function (object, inputstack, splitby = 1, quantiles = c(),
   blankout <- data.frame(matrix(ncol = (1 + length(quantiles)), 
                                 nrow = ncell(inputstack[[1]])))
   whichvals <- which(complete.cases(input.matrix))
-  input.matrix <- input.matrix[complete.cases(input.matrix), 
-                               ]
+  input.matrix <- input.matrix[complete.cases(input.matrix),]
   
-  input.matrix <- cbind(input.matrix,rep(time, nrow(input.matrix)))
-  colnames(input.matrix)[ncol(input.matrix)] <- timevar
+  if(class(ri.data)=='RasterLayer') {
+    input.matrix <- cbind(input.matrix,ri.data@values)
+  } else {
+    input.matrix <- cbind(input.matrix,rep(ri.data, nrow(input.matrix)))
+  }
+  
+  colnames(input.matrix)[ncol(input.matrix)] <- ri.name
   
   if (splitby == 1) {
     
-    if(ranef==FALSE) {
+    if(ri.pred==FALSE) {
       pred <- dbarts:::predict.rbart(object, 
-                                     input.matrix[,!(colnames(input.matrix)==timevar)], 
-                                     group.by=input.matrix[,timevar],
+                                     input.matrix[,!(colnames(input.matrix)==ri.name)], 
+                                     group.by=input.matrix[,ri.name],
                                      value='bart')
     } else {
       pred <- dbarts:::predict.rbart(object, 
-                                     input.matrix[,!(colnames(input.matrix)==timevar)], 
-                                     group.by=input.matrix[,timevar],
+                                     input.matrix[,!(colnames(input.matrix)==ri.name)], 
+                                     group.by=input.matrix[,ri.name],
                                      value='ppd')
     }
     
@@ -43,15 +47,15 @@ predict.re <- function (object, inputstack, splitby = 1, quantiles = c(),
         start_time <- Sys.time()
       }
       
-      if(ranef==FALSE) {
+      if(ri.pred==FALSE) {
         pred <- dbarts:::predict.rbart(object, 
-                                       input.str[[i]][,!(colnames(input.str[[i]])==timevar)], 
-                                       group.by=input.str[[i]][,timevar],
+                                       input.str[[i]][,!(colnames(input.str[[i]])==ri.name)], 
+                                       group.by=input.str[[i]][,ri.name],
                                        value='bart')
       } else {
         pred <- dbarts:::predict.rbart(object, 
-                                       input.str[[i]][,!(colnames(input.str[[i]])==timevar)], 
-                                       group.by=input.str[[i]][,timevar],
+                                       input.str[[i]][,!(colnames(input.str[[i]])==ri.name)], 
+                                       group.by=input.str[[i]][,ri.name],
                                        value='ppd')
       }
       

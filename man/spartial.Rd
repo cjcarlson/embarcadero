@@ -28,30 +28,3 @@ Returns a nice plot
 \description{
 Project partial dependence surfaces in the real, geography-having world: see the spatial signal of any given variable's contribution to the model predictions.
 }
-\examples{
-library(embarcadero)
-library(velox)
-set.seed(12345)
-
-data(ticks)
-data(covsraw)
-covs = covsraw
-mod <- SpatialPointsDataFrame(ticks[,3:4],data.frame(ticks[,1]))
-names(mod@data) <- 'Presence'
-tmp=rasterize(mod, covs[[1]], field="Presence", fun="min")
-pts.sp1=rasterToPoints(tmp, fun=function(x){x>0})
-
-pres.cov <- raster::extract(covs, pts.sp1[,1:2])
-absence <- randomPoints(covs,nrow(ticks)) 
-abs.cov <- raster::extract(covs, absence)
-pres.cov <- data.frame(pres.cov); pres.cov$tick <- 1
-abs.cov <- data.frame(abs.cov); abs.cov$tick <- 0
-all.cov <- rbind(pres.cov, abs.cov)
-all.cov <- all.cov[complete.cases(all.cov),]
-
-first.model <- bart(all.cov[,1:11], all.cov[,'tick'], keeptrees=TRUE)
-
-s1 <- spartial(first.model, covs, x.vars=c('bio1'),
-               equal = TRUE, smooth=5)
-
-}

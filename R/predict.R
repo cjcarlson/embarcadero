@@ -29,8 +29,8 @@ predict2.bart <- function(object,
     stop("Variable names of RasterStack don't match the requested names")
   }
   input.matrix <- as.matrix(getValues(inputstack))
-  
-  blankout <- data.frame(matrix(ncol=(1+length(quantiles)), nrow=ncell(inputstack[[1]])))
+  blankout <- data.frame(matrix(ncol=(1+length(quantiles)), 
+                                nrow=ncell(inputstack[[1]])))
   whichvals <- which(complete.cases(input.matrix))
   input.matrix <- input.matrix[complete.cases(input.matrix),]
   
