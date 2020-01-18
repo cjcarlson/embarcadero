@@ -35,8 +35,10 @@ bart.flex <- function(x.data, y.data, ri.data = NULL,
     model <- rbart_vi(f, 
                        group.by=train[,ncol(train)],
                        data=train,
-                       n.chains=1L,
-                       n.threads=1L,
+                       n.samples=1000,
+                       n.burn=100,
+                       n.chains=1,
+                       n.threads=1,
                        n.trees = n.trees,
                        keepTrees = TRUE) 
   }

@@ -30,7 +30,7 @@ bart.step <- function(x.data, y.data, ri.data=NULL,
   
   invisible(best.model <- bart.flex(x.data = x.data[,vs], y.data = y.data, 
                                       ri.data = ri.data,
-                                      n.trees = n.trees))) 
+                                      n.trees = n.trees))
   if(full==TRUE){varimp(best.model, plots=TRUE)}
   if(full==TRUE) {p <- summary(best.model, plots=TRUE)
                   print(p)} else 
