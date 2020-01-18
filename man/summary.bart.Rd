@@ -15,4 +15,6 @@
 An all-purpose model summary tool, which reports the model call, an AUC value (the area under the receiver-operator curve), and the optimal threshold based on the true skill statistic (and return the associated Type I and II error rates). 
 
 There are also four diagnostic plots generated (plots=FALSE to turn off): the receiver-operator curve; a histogram of fitted values; the threshold-performance curve, which reports the true skill statistic for a given cutoff, and has a line at the optimal value; and a dotplot showing the fitted values split by the threshold and the true y values in the data.
+
+This is currently compatible with rbart objects but returns the AUC and diagnostics on the model fits WITHOUT THE RANDOM EFFECTS INCORPORATED. Future versions need to add the option to include random effects, to do an AUC with/without.
 }
