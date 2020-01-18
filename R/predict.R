@@ -19,23 +19,65 @@
 predict2.bart <- function(object, 
                      inputstack,
                      splitby=1,
+                     ri.data=NULL, 
+                     ri.name=NULL, 
+                     ri.pred=FALSE,
                      quantiles=c(),
                      quiet=FALSE) {
   
-  xnames <- attr(object$fit$data@x, "term.labels")
-  if(all(xnames %in% names(inputstack))) {
-    inputstack <- inputstack[[xnames]]
-  } else {
-    stop("Variable names of RasterStack don't match the requested names")
+  if(class(object)=='rbart') {
+    if(is.null(ri.data)) {stop('ERROR: Input either a value or a raster in ri.data')}
+    if(is.null(ri.name)) {stop('ERROR: Input the correct random effect variable name in the model object in ri.name')}
   }
+  
+  if(class(object)=='rbart') {
+    xnames <- attr(object$fit[[1]]$data@x, "term.labels")
+    if (all(xnames %in% c(names(inputstack),ri.name))) {
+      inputstack <- inputstack[[xnames[!(xnames==ri.name)]]]
+    } else {
+      stop("Variable names of RasterStack don't match the requested names")
+    }
+  }
+  if(class(object)=='bart') {
+    xnames <- attr(object$fit$data@x, "term.labels")
+    if(all(xnames %in% names(inputstack))) {
+      inputstack <- inputstack[[xnames]]
+    } else {
+      stop("Variable names of RasterStack don't match the requested names")
+    }
+  }
+  
   input.matrix <- as.matrix(getValues(inputstack))
   blankout <- data.frame(matrix(ncol=(1+length(quantiles)), 
                                 nrow=ncell(inputstack[[1]])))
   whichvals <- which(complete.cases(input.matrix))
   input.matrix <- input.matrix[complete.cases(input.matrix),]
   
+  if(class(object)=='rbart') {
+    if(class(ri.data)=='RasterLayer') {
+      input.matrix <- cbind(input.matrix,ri.data@values)
+    } else {
+      input.matrix <- cbind(input.matrix,rep(ri.data, nrow(input.matrix)))
+    }
+    colnames(input.matrix)[ncol(input.matrix)] <- ri.name
+  }
+  
   if(splitby==1) {
-    pred <- dbarts:::predict.bart(object, input.matrix)
+    if(class(object)=='bart') {
+      pred <- dbarts:::predict.bart(object, input.matrix)
+    } else if(class(object)=='rbart') {
+      if(ri.pred==FALSE) {
+        pred <- dbarts:::predict.rbart(object, 
+                                       input.matrix[,!(colnames(input.matrix)==ri.name)], 
+                                       group.by=input.matrix[,ri.name],
+                                       value='bart')
+      } else {
+        pred <- dbarts:::predict.rbart(object, 
+                                       input.matrix[,!(colnames(input.matrix)==ri.name)], 
+                                       group.by=input.matrix[,ri.name],
+                                       value='ppd')
+      }
+    } 
     pred.summary <- dfextract(pred, quant=quantiles)
   } else {
     split <- floor(nrow(input.matrix)/splitby)
@@ -43,7 +85,22 @@ predict2.bart <- function(object,
     input.str <- split(input.df, (as.numeric(1:nrow(input.df))-1) %/% split)
     for(i in 1:length(input.str)){
         if(i==1) {start_time <- Sys.time()}
-        pred <- dbarts:::predict.bart(object, input.str[[i]])
+      
+          if(class(object)=='bart') {
+            pred <- dbarts:::predict.bart(object, input.str[[i]])
+           } else if(class(object)=='rbart') {
+             if(ri.pred==FALSE) {
+               pred <- dbarts:::predict.rbart(object, 
+                                              input.str[[i]][,!(colnames(input.str[[i]])==ri.name)], 
+                                              group.by=input.str[[i]][,ri.name],
+                                              value='bart')
+             } else {
+               pred <- dbarts:::predict.rbart(object, 
+                                              input.str[[i]][,!(colnames(input.str[[i]])==ri.name)], 
+                                              group.by=input.str[[i]][,ri.name],
+                                              value='ppd')
+             }
+          } 
         pred.summary <- dfextract(pred, quant=quantiles)
         input.str[[i]] <- pred.summary
         if(i==1) {end_time <- Sys.time()
