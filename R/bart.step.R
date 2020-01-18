@@ -18,16 +18,19 @@
 #'
 #'
 
-bart.step <- function(x.data, y.data,
+bart.step <- function(x.data, y.data, ri.data=NULL,
                       iter.step=100, tree.step=10,
                       iter.plot=100,
                       full=FALSE,
                       quiet=FALSE) {
 
   quiet2 <- quiet
-  if(full==TRUE){varimp.diag(x.data, y.data, iter=iter.plot, quiet=quiet2)}
-  vs <- variable.step(x.data, y.data, n.trees=tree.step, iter=iter.step, quiet=quiet2)
-  invisible(best.model <- bart(x.data[,vs], y.data, keeptrees=TRUE))
+  if(full==TRUE){varimp.diag(x.data, y.data, ri.data, iter=iter.plot, quiet=quiet2)}
+  vs <- variable.step(x.data, y.data, ri.data, n.trees=tree.step, iter=iter.step, quiet=quiet2)
+  
+  invisible(best.model <- bart.flex(x.data = x.data[,vs], y.data = y.data, 
+                                      ri.data = ri.data,
+                                      n.trees = n.trees))) 
   if(full==TRUE){varimp(best.model, plots=TRUE)}
   if(full==TRUE) {p <- summary(best.model, plots=TRUE)
                   print(p)} else 
