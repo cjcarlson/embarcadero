@@ -12,7 +12,7 @@
 #' @aliases varimp.plot 
 #'
 
-varimp.diag <- function(x.data, y.data, iter=50, quiet=FALSE) {
+varimp.diag <- function(x.data, y.data, ri.data=NULL, iter=50, quiet=FALSE) {
 
   nvars <- ncol(x.data)
   varnums <- c(1:nvars)
