@@ -4,7 +4,8 @@
 \alias{variable.step}
 \title{Automatic variable selection}
 \usage{
-variable.step(x.data, y.data, n.trees = 10, iter = 50, quiet = FALSE)
+variable.step(x.data, y.data, ri.data = NULL, n.trees = 10,
+  iter = 50, quiet = FALSE)
 }
 \arguments{
 \item{x.data}{A data frame of covariates}

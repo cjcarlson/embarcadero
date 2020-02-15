@@ -4,8 +4,8 @@
 \alias{bart.step}
 \title{Full-service variable selection}
 \usage{
-bart.step(x.data, y.data, iter.step = 100, tree.step = 10,
-  iter.plot = 100, full = FALSE, quiet = FALSE)
+bart.step(x.data, y.data, ri.data = NULL, iter.step = 100,
+  tree.step = 10, iter.plot = 100, full = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{x.data}{A data frame of covariates}
