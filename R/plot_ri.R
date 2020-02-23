@@ -1,4 +1,18 @@
-
+#' @title A plot tool for riBART models
+#'
+#' @description
+#'
+#' Tiny code for tiny task. 
+#'
+#' @param model Object of class rbart
+#' @param temporal Is this yearly data (line plot) or categorical
+#'  
+#' @return Returns a plot
+#' 
+#' @export
+#'
+#'
+#'
 plot.ri <- function(model, temporal=TRUE) {
   
   if(temporal == TRUE) {
