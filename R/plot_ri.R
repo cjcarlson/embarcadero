@@ -34,10 +34,7 @@ plot.ri <- function(model, temporal=TRUE) {
                          axis.title.x = element_text(size=rel(1.3), vjust = -0.8),
                          axis.text.y = element_text(size=rel(1.4)),
                          plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"),
-                         panel.grid.minor = element_blank(),
-                         panel.grid.major.x = element_blank(),
-                         panel.grid.major.y = element_line(color='grey',
-                                                           linetype='dashed')) -> p
+                         panel.grid.minor = element_blank()) -> p
   } else {
     
     modelH.ri$ranef %>% data.frame() %>% gather() %>%
