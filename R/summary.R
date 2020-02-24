@@ -58,7 +58,7 @@ summary.bart <- function(object, plots=TRUE) {
 
     pnormdf <- data.frame(pnorm = colMeans(pnorm(object$yhat.train)))
     g2 <- ggplot(pnormdf, aes(pnorm)) + geom_histogram(stat='bin', binwidth=0.05) + 
-      ylab('Predicted probability') + ggtitle('Fitted values') + 
+      ylab('Number of training data points') + ggtitle('Fitted values') + 
       xlab('Predicted probability') + 
       theme_classic()
     
