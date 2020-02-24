@@ -87,7 +87,7 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
   }
   
   g1 <- ggplot2::ggplot(rmses, aes(y=RMSE, x=VarsDropped)) +
-    geom_line(color="black") + geom_point(size=3) + theme_bluewhite() +
+    geom_line(color="black") + geom_point(size=3) + theme_bw() +
     ylab("RMSE of model\n") + xlab("\nVariables dropped") +
     theme(axis.text = element_text(size=12),
           axis.title = element_text(size=14,face="bold")) +
