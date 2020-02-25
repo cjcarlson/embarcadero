@@ -120,7 +120,7 @@ predict2.bart <- function(object,
   }
   
   pred.summary <- as.matrix(pred.summary)
-  output = pnorm(pred.summary)
+  #output = pnorm(pred.summary)
   
   blankout[whichvals,] <- output
   output <- blankout

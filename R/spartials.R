@@ -9,7 +9,6 @@
 #' @param x.vars The particular x variables you want to map
 #' @param equal Equal spacing on x breaks (versus quantiles). 
 #' @param smooth Smoothing factor for the x breaks (works like partials).
-#' @param transform Backtransform the pnorm or not
 #' @param save Turn this on if you want to save the outputs as a RasterStack, for nicer use/plotting elsewhere.
 #' 
 #' @return Returns a nice plot
@@ -70,10 +69,6 @@ spartial <- function(model, envs, x.vars=NULL,
       colnames(dfbin) <- c(0,1)
       dfbin <- reshape2::melt(dfbin)
       
-      if(transform==TRUE){
-        dfbin$value <- pnorm(dfbin$value)
-      }
-      
       dfbin %>% group_by(variable) %>% summarize(value = median(value)) %>% data.frame() -> dfbin
       colnames(dfbin) <- c('is','becomes')
       dfbin$is <- as.numeric(as.character(dfbin$is))
@@ -89,7 +84,6 @@ spartial <- function(model, envs, x.vars=NULL,
       # FOR NON-BINARY VARIABLES
       
       q50 <- apply(pd$fd[[i]],2,median)
-      if(transform==TRUE) {q50 <- pnorm(q50)}
       df <- data.frame(x=pd$levs[[i]],med=q50)
       
       ### DEFINE RASTER RECLASS 

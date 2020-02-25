@@ -11,7 +11,6 @@
 #' @param ci Plot a given \% credible interval with a blue bar. Defaults to 95\% and controlled by ciwidth 
 #' @param ciwidth Specify the width of the plotted credible issue
 #' @param trace Traceplots for each individual draw from the posterior
-#' @param transform This converts from the logit output of dbarts:::predict to actual 0 to 1 probabilities. I wouldn't turn this off unless you're really interested in a deep dive on the model.
 #' @param panels For multiple variables, use this to create a multipanel figure. 
 #'
 #'
@@ -47,7 +46,7 @@
 
 partial <- function(model, x.vars=NULL, equal=TRUE, smooth=1,
                     ci=TRUE, ciwidth=0.95, trace=TRUE,
-                    transform=TRUE, panels=FALSE) {
+                    panels=FALSE) {
   
   # A couple errors in case I'm Idiot
   
@@ -100,9 +99,6 @@ for (i in 1:length(pd$fd)) {
     colnames(dfbin) <- c(0,1)
     dfbin <- reshape2::melt(dfbin)
     
-    if(transform==TRUE){
-      dfbin$value <- pnorm(dfbin$value)
-    }
   
     if(ci==FALSE) {
     g <- ggplot(dfbin,aes(x=variable, y=value)) + geom_boxplot() + 
@@ -123,15 +119,12 @@ for (i in 1:length(pd$fd)) {
   } else {
     
   q50 <- apply(pd$fd[[i]],2,median)
-  if(transform==TRUE) {q50 <- pnorm(q50)}
   
   df <- data.frame(x=pd$levs[[i]],med=q50)
 
   if(ci==TRUE) {
     q05 <- apply(pd$fd[[i]],2,quantile,probs=0.5 - ciwidth/2)
-    if(transform==TRUE) {q05 <- pnorm(q05)}
     q95 <- apply(pd$fd[[i]],2,quantile,probs=0.5 + ciwidth/2)
-    if(transform==TRUE) {q95 <- pnorm(q95)}
     df$q05 <- q05
     df$q95 <- q95
   }
@@ -148,15 +141,9 @@ for (i in 1:length(pd$fd)) {
   
   if(ci==TRUE) {alpha2 <- 0.05; k <- 4} else {alpha2 <- 0.025*(model$fit$control@n.trees/200); k <- 2}
   if(trace==TRUE) {
-    if(transform==TRUE) {
-      for(j in 1:nrow(pd$fd[[i]])) {
-        g <- g + geom_line(aes_string(y=pnorm(df[,j+k])), alpha=alpha2)
-      }
-    } else {
       for(j in 1:nrow(pd$fd[[i]])) {
         g <- g + geom_line(aes_string(y=df[,j+k]), alpha=alpha2)
       }
-    }
   }
   
   if(ci==TRUE) {

@@ -27,7 +27,7 @@ summary.bart <- function(object, plots=TRUE) {
   
   true.vector <- fitobj$data@y 
   
-  pred <- prediction(colMeans(pnorm(object$yhat.train)), true.vector)
+  pred <- prediction(colMeans(object$yhat.train), true.vector)
   
   perf.tss <- performance(pred,"sens","spec")
   tss.list <- (perf.tss@x.values[[1]] + perf.tss@y.values[[1]] - 1)
@@ -56,7 +56,8 @@ summary.bart <- function(object, plots=TRUE) {
       geom_abline(intercept=0,slope=1,col='red')+ 
       theme_classic()
 
-    pnormdf <- data.frame(pnorm = colMeans(pnorm(object$yhat.train)))
+    # no longer pnorm because of a change in dbarts but irrelevant
+    pnormdf <- data.frame(pnorm = colMeans(object$yhat.train))
     g2 <- ggplot(pnormdf, aes(pnorm)) + geom_histogram(stat='bin', binwidth=0.05) + 
       ylab('Number of training data points') + ggtitle('Fitted values') + 
       xlab('Predicted probability') + 
@@ -71,8 +72,8 @@ summary.bart <- function(object, plots=TRUE) {
       geom_vline(xintercept=thresh,col='red')+ 
       theme_classic()
     
-    obsf <- data.frame(fitted=pnorm(colMeans(object$yhat.train)),
-                       classified=as.numeric(pnorm(colMeans(object$yhat.train))>thresh),
+    obsf <- data.frame(fitted=colMeans(object$yhat.train),
+                       classified=as.numeric(colMeans(object$yhat.train)>thresh),
                        observed=fitobj$data@y)
     
     g4 <- ggplot(obsf, aes(x=fitted, y=factor(observed), 

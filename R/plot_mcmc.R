@@ -84,9 +84,9 @@ plot.mcmc <- function(object, inputstack, iter=100, wait=0.1, quiet=FALSE) {
   cat('\n Generating plots \n')
   if(!quiet){pb <- txtProgressBar(min = 0, max = iter, style = 3)}
   for (i in 1:iter){
-    output.m <- pnorm(t(matrix(pred[i,],
+    output.m <- t(matrix(pred[i,],
                                nrow = ncol(inputstack),
-                               ncol = nrow(inputstack))))
+                               ncol = nrow(inputstack)))
     r <- raster(output.m,
                 xmn=xmin(inputstack[[1]]), xmx=xmax(inputstack[[1]]),
                 ymn=ymin(inputstack[[1]]), ymx=ymax(inputstack[[1]]),
