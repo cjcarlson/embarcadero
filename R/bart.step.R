@@ -37,4 +37,3 @@ bart.step <- function(x.data, y.data, ri.data=NULL,
                   print(p)}
   invisible(best.model)
 }  
- 

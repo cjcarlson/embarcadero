@@ -57,8 +57,8 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
         vi.j.df[,index+1] <- vi.j[,2]
       }
       
-      pred.p <- colMeans(model.j$yhat.train)[y.data==1]
-      pred.a <- colMeans(model.j$yhat.train)[y.data==0]
+      pred.p <- colMeans(pnorm(model.j$yhat.train))[y.data==1]
+      pred.a <- colMeans(pnorm(model.j$yhat.train))[y.data==0]
       #e <- evaluate(p=pred.p,
       #              a=pred.a)
       #aucs <- rbind(aucs,c(var.j,e@auc)); colnames(aucs) <- c('Vars','AUC')
