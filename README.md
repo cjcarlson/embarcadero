@@ -1,10 +1,6 @@
 # 🌲🌉 Species distribution models with BART 🌉 🌲
 
-Colin J. Carlson
-
-Georgetown University
-
-February 2020
+Colin J. Carlson (Georgetown University); February 2020
 
 __What's BART?__ 
 
