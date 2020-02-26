@@ -19,11 +19,12 @@ This package is basically a wrapper around 'dbarts'  with a few tools
 - spatial prediction 
 - credible interval draws from the posterior distribution
 - visualization of how posterior draws learn over time 
-- variable importance measures
+- variable importance measures and plots
 - stepwise variable elimination
 - automatic Nice Plots for partials, including multiple ways to visualize posterior draws
 - spatial projection of partials ("spartials")
 - compatibility with random intercept BART models (riBART)
+- plots for random intercepts 
 
 In future versions I'd hope to include compatibility with:
 - explicitly-spatial adaptations of BART (spatial priors)
