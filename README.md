@@ -23,11 +23,11 @@ This package is basically a wrapper around 'dbarts'  with a few tools
 - stepwise variable elimination
 - automatic Nice Plots for partials, including multiple ways to visualize posterior draws
 - spatial projection of partials ("spartials")
+- compatibility with random intercept BART models (riBART)
 
-In future versions I'd hope to include:
-- parallelized prediction to Make More Faster
-- compatibility with other BART engines/possibility to select one manually
+In future versions I'd hope to include compatibility with:
 - explicitly-spatial adaptations of BART (spatial priors)
+- compatibility with smoothed BART models (softBART) and sparse BART models with Dirichlet priors (DART)
 
 __How do I install__?
 
