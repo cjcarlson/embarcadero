@@ -1,5 +1,9 @@
 # 🌲🌉 Species distribution models with BART 🌉 🌲
 
+Colin J. Carlson
+Georgetown University
+February 2020
+
 __What's BART?__ 
 
 Bayesian additive regression trees (BARTs) are an exciting alternative to other popular classification tree methods being used in ecology, like random forests or boosted regression trees. Whereas boosted regression trees fit an ensemble of trees each explaining smaller fractions of variance, BART starts by fitting a sum-of-trees model and then uses Bayesian "backfitting" with an MCMC algorithm to create a posterior draw. 
