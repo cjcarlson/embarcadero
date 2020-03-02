@@ -37,7 +37,7 @@ summary.bart <- function(object, plots=TRUE) {
   cat('Area under the receiver-operator curve', "\n")
   cat('AUC =', auc, "\n", "\n")
   
-  thresh <- tss.df$alpha[which(tss.df$tss==max(tss.df$tss))]
+  thresh <- min(tss.df$alpha[which(tss.df$tss==max(tss.df$tss))])
   cat('Recommended threshold (maximizes true skill statistic)', "\n")
   cat('Cutoff = ', thresh, "\n")
   cat('TSS = ', tss.df[which(tss.df$alpha==thresh),'tss'], "\n")
