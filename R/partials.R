@@ -116,9 +116,9 @@ for (i in 1:length(pd$fd)) {
               axis.title.y = element_text(vjust=1.7)) 
     }
     
-    
+    if(panels==FALSE) {g <- g + theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))}else {
+      g <- g + theme(plot.margin=unit(c(0.2,0.2,0.2,0.2),"cm"))
     plots[[i]] <- g
-    #if(panels==FALSE) {print(g)}
     
   } else {
     
@@ -164,8 +164,11 @@ for (i in 1:length(pd$fd)) {
   }
   
   g <- g + geom_line(size=1.25)
+  
+  if(panels==FALSE) {g <- g + theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))} else {
+    g <- g + theme(plot.margin=unit(c(0.2,0.2,0.2,0.2),"cm"))
+  }
   plots[[i]] <- g
-  #if(panels==FALSE) {print(g)}
 
   }
 }
