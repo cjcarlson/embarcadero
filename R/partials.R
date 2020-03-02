@@ -117,7 +117,7 @@ for (i in 1:length(pd$fd)) {
     }
     
     if(panels==FALSE) {g <- g + theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))}else {
-      g <- g + theme(plot.margin=unit(c(0.15,0.15,0.15,0.15),"cm"))
+      g <- g + theme(plot.margin=unit(c(0.15,0.15,0.15,0.15),"cm"))}
     plots[[i]] <- g
     
   } else {
@@ -166,7 +166,7 @@ for (i in 1:length(pd$fd)) {
   g <- g + geom_line(size=1.25)
   
   if(panels==FALSE) {g <- g + theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))} else {
-    g <- g + theme(plot.margin=unit(c(0.15,0.15,0.15,0.15),"cm"))
+    g <- g + theme(plot.margin=unit(c(0.15,0.15,0.15,0.15),"cm"))}
   }
   plots[[i]] <- g
 
