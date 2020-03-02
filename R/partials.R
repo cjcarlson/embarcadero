@@ -118,7 +118,7 @@ for (i in 1:length(pd$fd)) {
     
     
     plots[[i]] <- g
-    if(panels==FALSE) {print(g)}
+    #if(panels==FALSE) {print(g)}
     
   } else {
     
@@ -165,7 +165,7 @@ for (i in 1:length(pd$fd)) {
   
   g <- g + geom_line(size=1.25)
   plots[[i]] <- g
-  if(panels==FALSE) {print(g)}
+  #if(panels==FALSE) {print(g)}
 
   }
 }
