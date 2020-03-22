@@ -95,7 +95,7 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
   
   print(noquote("---------------------------------------"))
   print(noquote("Final recommended variable list"))
-  varlist.final <- varlist.orig[!(varlist.orig %in% dropped.varlist[1:(which(rmses$RMSE==min(rmses$RMSE))-1)])]
+  varlist.final <- varlist.orig[!(varlist.orig %in% dropped.varlist[0:(which(rmses$RMSE==min(rmses$RMSE))-1)])]
   print(noquote(varlist.final))
   invisible(varlist.final)
 }
