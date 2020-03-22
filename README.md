@@ -47,7 +47,7 @@ The updated preprint (coming shortly) includes a bunch of code, and there's a ne
 
 __How do I cite embarcadero__?
 
-Please cite [this](https://www.biorxiv.org/content/10.1101/774604v2) preprint for now. The paper is currently in revision at *Methods in Ecology and Evolution*!
+The embarcadero package is published at [*Methods in Ecology and Evolution*](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13389)!
 
 __Can I help__?
 
