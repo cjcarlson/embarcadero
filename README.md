@@ -51,7 +51,7 @@ The embarcadero package is published at [*Methods in Ecology and Evolution*](htt
 
 __Can I help__?
 
-Please! Reach out to cjc322@georgetown.edu if you want to help with development or otherwise are interested in being one of the first users.
+Please! Reach out to colin.carlson@georgetown.edu if you want to help with development or otherwise are interested in being one of the first users.
 
 __Why is it called embarcadero?__
 
