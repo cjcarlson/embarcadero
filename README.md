@@ -23,7 +23,7 @@ Or,
 devtools::install_version("velox", version = "0.2.0")
 ```
 
-Right now, if you have additional issues on Mac, it might be because of some underlying issues with your C compiler, or GDAL, or something else. If you leave me an issue I can try to help you figure it out. [Here](https://community.rstudio.com/t/later-package-not-compiling-on-macos-unknown-type-name-uuid-t/57171/2) are some posts that were helpful when we recently had some of these issues.
+Right now, *if you have additional issues on Mac*, it might be because of some underlying issues with your C compiler, the current version of Rcpp (which has a known issue), and/or GDAL. If you leave me an issue I can try to help you figure it out. [Here](https://community.rstudio.com/t/later-package-not-compiling-on-macos-unknown-type-name-uuid-t/57171/2) [are](https://github.com/hunzikp/velox/issues/30) [some](https://github.com/rstudio/httpuv/issues/120) [posts](https://stackoverflow.com/questions/12141422/error-gdal-config-not-found) that were helpful when we recently had some of these issues.
 
 __What's BART?__ 
 
