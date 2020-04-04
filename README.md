@@ -4,6 +4,27 @@ Colin J. Carlson (Georgetown University); February 2020
 
 [![DOI](https://zenodo.org/badge/187687555.svg)](https://zenodo.org/badge/latestdoi/187687555)
 
+__How do I install__?
+
+```
+# install.packages('devtools')
+devtools::install_github('cjcarlson/embarcadero')
+```
+
+Before you do that, you need the "velox" package, which is currently not on CRAN (that should be fixed soon). You can do that one of a couple ways:
+
+```
+remotes::install_github("hunzikp/velox@master")
+```
+
+Or,
+
+```
+devtools::install_version("velox", version = "0.2.0")
+```
+
+Right now, if you have additional issues on Mac, it might be because of some underlying issues with your C compiler, or GDAL, or something else. If you leave me an issue I can try to help you figure it out.
+
 __What's BART?__ 
 
 Bayesian additive regression trees (BARTs) are an exciting alternative to other popular classification tree methods being used in ecology, like random forests or boosted regression trees. Whereas boosted regression trees fit an ensemble of trees each explaining smaller fractions of variance, BART starts by fitting a sum-of-trees model and then uses Bayesian "backfitting" with an MCMC algorithm to create a posterior draw. 
@@ -33,13 +54,6 @@ This package is basically a wrapper around 'dbarts'  with a few tools
 In future versions I'd hope to include compatibility with:
 - explicitly-spatial adaptations of BART (spatial priors)
 - compatibility with smoothed BART models (softBART) and sparse BART models with Dirichlet priors (DART)
-
-__How do I install__?
-
-```
-# install.packages('devtools')
-devtools::install_github('cjcarlson/embarcadero')
-```
 
 __How do I learn to use embarcadero__?
 
