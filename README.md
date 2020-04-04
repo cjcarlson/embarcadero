@@ -23,7 +23,7 @@ Or,
 devtools::install_version("velox", version = "0.2.0")
 ```
 
-Right now, if you have additional issues on Mac, it might be because of some underlying issues with your C compiler, or GDAL, or something else. If you leave me an issue I can try to help you figure it out.
+Right now, if you have additional issues on Mac, it might be because of some underlying issues with your C compiler, or GDAL, or something else. If you leave me an issue I can try to help you figure it out. [Here](https://community.rstudio.com/t/later-package-not-compiling-on-macos-unknown-type-name-uuid-t/57171/2) are some posts that were helpful when we recently had some of these issues.
 
 __What's BART?__ 
 
