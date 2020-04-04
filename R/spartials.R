@@ -5,7 +5,7 @@
 #' Project partial dependence surfaces in the real, geography-having world: see the spatial signal of any given variable's contribution to the model predictions. 
 #'
 #' @param model A dbarts model object
-#' @param envs The rasterStack of environmental variables 
+#' @param envs The rasterStack of environmental variables, OR (this is new functionality and mostly untested, but important if you're doing tSDMs) a list of rasterstacks (e.g., climate layers by year). If it's a list, this will return a rasterstack of spartials ordered by that list, then by variable (e.g., x1-stack1, x1-stack2, x2-stack1, x2-stack2)
 #' @param x.vars The particular x variables you want to map
 #' @param equal Equal spacing on x breaks (versus quantiles). 
 #' @param smooth Smoothing factor for the x breaks (works like partials).
@@ -14,9 +14,25 @@
 #' 
 #' @return Returns a nice plot
 #' 
+#' @examples 
+#' 
+#' ### RUN THE VIGNETTE UP TO THE FIRST MODEL, FOR THESE TO WORK
+#' s1 <- spartial(sdm, 
+#'                climate,
+#'                x.vars = 'x1')
+#' plot(s1)
+#' 
+#' s1 <- spartial(sdm,
+#'                list(climate, climate*0.9),
+#'                x.vars = 'x1')
+#' plot(s1)
+#' 
+#' s1 <- spartial(sdm,
+#'                list(climate, climate*0.9),
+#'                x.vars = c('x1','x2'))
+#' plot(s1)
+#' 
 #' @export
-#'
-#'
 
 spartial <- function(model, envs, x.vars=NULL, 
                      equal=FALSE, smooth=1,
@@ -78,10 +94,15 @@ spartial <- function(model, envs, x.vars=NULL,
       colnames(dfbin) <- c('is','becomes')
       dfbin$is <- as.numeric(as.character(dfbin$is))
       
-      lyrtmp <- envs[[pd$xlbs[[i]]]]
-      lyrtr <- raster::reclassify(lyrtmp,as.matrix(dfbin))
-      #plot(lyrtr, 
-      #     box=F, axes=F)
+      if(class(envs)=='RasterStack') {
+        lyrtmp <- envs[[pd$xlbs[[i]]]]
+        lyrtr <- raster::reclassify(lyrtmp,as.matrix(dfbin))
+      } else if (class(envs)=='list') {
+        lyrtr <- lapply(envs, function(x) {
+        lyrtmp <- x[[pd$xlbs[[i]]]]
+        return(raster::reclassify(lyrtmp,as.matrix(dfbin)))
+        })
+      }
       
       if(save==TRUE) {if(exists("pdstack")) {pdstack <- c(pdstack, lyrtr)} else {pdstack <- c(lyrtr)} }
       
@@ -96,15 +117,24 @@ spartial <- function(model, envs, x.vars=NULL,
       nmax <- length(df$x)
       xmeds <- (df$x[2:nmax] - df$x[1:(nmax-1)])/2 + df$x[1:(nmax-1)]
       
-      lyrtmp <- envs[[pd$xlbs[[i]]]]
-      xmat <- data.frame(from=c(cellStats(lyrtmp, min), xmeds),
-                         to=c(xmeds, cellStats(lyrtmp, max)),
-                         becomes=df$med)
-      
-      lyrtr <- raster::reclassify(lyrtmp,xmat,
-                                   include.lowest=TRUE)
-      #plot(lyrtr, 
-      #     box=F, axes=F)
+      if(class(envs)=='RasterStack') {
+        lyrtmp <- envs[[pd$xlbs[[i]]]]
+        xmat <- data.frame(from=c(cellStats(lyrtmp, min), xmeds),
+                           to=c(xmeds, cellStats(lyrtmp, max)),
+                           becomes=df$med)
+        lyrtr <- raster::reclassify(lyrtmp,xmat,
+                                    include.lowest=TRUE)
+        
+      } else if (class(envs)=='list') {
+        lyrtr <- lapply(envs, function(x) {
+          lyrtmp <- x[[pd$xlbs[[i]]]]
+          xmat <- data.frame(from=c(cellStats(lyrtmp, min), xmeds),
+                             to=c(xmeds, cellStats(lyrtmp, max)),
+                             becomes=df$med)
+          return(raster::reclassify(lyrtmp,xmat,
+                                      include.lowest=TRUE))
+        })
+      }
       
       if(save==TRUE) {if(exists("pdstack")) {pdstack <- c(pdstack, lyrtr)} else {pdstack <- c(lyrtr)} }
     }
