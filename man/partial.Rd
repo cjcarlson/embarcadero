@@ -4,8 +4,17 @@
 \alias{partial}
 \title{Better, nicer, friendlier partial dependence plots}
 \usage{
-partial(model, x.vars = NULL, equal = TRUE, smooth = 1, ci = TRUE,
-  ciwidth = 0.95, trace = TRUE, transform = TRUE, panels = FALSE)
+partial(
+  model,
+  x.vars = NULL,
+  equal = TRUE,
+  smooth = 1,
+  ci = TRUE,
+  ciwidth = 0.95,
+  trace = TRUE,
+  transform = TRUE,
+  panels = FALSE
+)
 }
 \arguments{
 \item{model}{A dbarts model object}

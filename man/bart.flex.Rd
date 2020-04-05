@@ -4,8 +4,14 @@
 \alias{bart.flex}
 \title{Wrapper for flexible riBART calls}
 \usage{
-bart.flex(x.data, y.data, ri.data = NULL, y.name = NULL,
-  ri.name = NULL, n.trees = 200)
+bart.flex(
+  x.data,
+  y.data,
+  ri.data = NULL,
+  y.name = NULL,
+  ri.name = NULL,
+  n.trees = 200
+)
 }
 \arguments{
 \item{x.data}{A data frame of covariates}

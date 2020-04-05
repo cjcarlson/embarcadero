@@ -94,13 +94,13 @@ spartial <- function(model, envs, x.vars=NULL,
       colnames(dfbin) <- c('is','becomes')
       dfbin$is <- as.numeric(as.character(dfbin$is))
       
-      if(class(envs)=='RasterStack') {
+      if(class(envs) %in% c('RasterStack','RasterBrick')) {
         lyrtmp <- envs[[pd$xlbs[[i]]]]
         lyrtr <- raster::reclassify(lyrtmp,as.matrix(dfbin))
       } else if (class(envs)=='list') {
         lyrtr <- lapply(envs, function(x) {
-        lyrtmp <- x[[pd$xlbs[[i]]]]
-        return(raster::reclassify(lyrtmp,as.matrix(dfbin)))
+          lyrtmp <- x[[pd$xlbs[[i]]]]
+          return(raster::reclassify(lyrtmp,as.matrix(dfbin)))
         })
       }
       
@@ -109,7 +109,7 @@ spartial <- function(model, envs, x.vars=NULL,
     } else {
       # FOR NON-BINARY VARIABLES
       
-      q50 <- apply(pd$fd[[i]],2,median)
+      q50 <- pnorm(apply(pd$fd[[i]],2,median))
       if(transform==TRUE) {q50 <- pnorm(q50)}
       df <- data.frame(x=pd$levs[[i]],med=q50)
       
@@ -117,10 +117,10 @@ spartial <- function(model, envs, x.vars=NULL,
       nmax <- length(df$x)
       xmeds <- (df$x[2:nmax] - df$x[1:(nmax-1)])/2 + df$x[1:(nmax-1)]
       
-      if(class(envs)=='RasterStack') {
+      if(class(envs) %in% c('RasterStack','RasterBrick')) {
         lyrtmp <- envs[[pd$xlbs[[i]]]]
-        xmat <- data.frame(from=c(cellStats(lyrtmp, min), xmeds),
-                           to=c(xmeds, cellStats(lyrtmp, max)),
+        xmat <- data.frame(from=c(min(cellStats(lyrtmp, min),min(df$x)), xmeds),
+                           to=c(xmeds, max(cellStats(lyrtmp, max),max(df$x))),
                            becomes=df$med)
         lyrtr <- raster::reclassify(lyrtmp,xmat,
                                     include.lowest=TRUE)
@@ -128,11 +128,11 @@ spartial <- function(model, envs, x.vars=NULL,
       } else if (class(envs)=='list') {
         lyrtr <- lapply(envs, function(x) {
           lyrtmp <- x[[pd$xlbs[[i]]]]
-          xmat <- data.frame(from=c(cellStats(lyrtmp, min), xmeds),
-                             to=c(xmeds, cellStats(lyrtmp, max)),
+          xmat <- data.frame(from=c(min(cellStats(lyrtmp, min),min(df$x)), xmeds),
+                             to=c(xmeds, max(cellStats(lyrtmp, max),max(df$x))),
                              becomes=df$med)
           return(raster::reclassify(lyrtmp,xmat,
-                                      include.lowest=TRUE))
+                                    include.lowest=TRUE))
         })
       }
       

@@ -1,6 +1,6 @@
 Package: embarcadero
 Title: Species distribution models with BART
-Version: 1.1.0.0001
+Version: 1.1.0.0002
 Authors@R: person("Colin", "Carlson", email = "colin.carlson@georgetown.edu", role = c("aut", "cre"))
 Description: A convenience tool package for running and analyzing species distribution models with Bayesian additive regression trees. 
 License: CC0
@@ -8,7 +8,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: raster, dbarts, Metrics, tidyverse, dismo, ROCR, patchwork,
         velox, ggpubr, matrixStats, data.table
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
