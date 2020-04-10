@@ -17,7 +17,7 @@ bart.flex <- function(x.data, y.data, ri.data = NULL,
                       n.trees = 200,
                       k = 2.0,
                       power = 2.0,
-                      base = 0 .95) {
+                      base = 0.95) {
   
   if(is.null(ri.data)) {
     train <- cbind(y.data, x.data) 
