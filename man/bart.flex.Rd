@@ -10,7 +10,10 @@ bart.flex(
   ri.data = NULL,
   y.name = NULL,
   ri.name = NULL,
-  n.trees = 200
+  n.trees = 200,
+  k = 2,
+  power = 2,
+  base = 0.95
 )
 }
 \arguments{
@@ -21,5 +24,5 @@ bart.flex(
 \item{ri.data}{Random intercept data}
 }
 \description{
-A little internal piece of code that allows you to easily drop random intercepts in. Not really for anyone but me :)
+A little internal piece of code that allows you to easily drop random intercepts in. It's a convenience tool I don't suggest using - it's a shortcut for if you feel very comfortable with the pipeline.
 }
