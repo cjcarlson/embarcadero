@@ -2,7 +2,7 @@
 #'
 #' @description
 #'
-#' A little internal piece of code that allows you to easily drop random intercepts in. Not really for anyone but me :)
+#' A little internal piece of code that allows you to easily drop random intercepts in. It's a convenience tool I don't suggest using - it's a shortcut for if you feel very comfortable with the pipeline.
 #' 
 #' @param x.data A data frame of covariates
 #' @param y.data A vector of outcomes (1/0)
@@ -14,7 +14,10 @@
 
 bart.flex <- function(x.data, y.data, ri.data = NULL,
                       y.name = NULL, ri.name = NULL,
-                      n.trees = 200) {
+                      n.trees = 200,
+                      k = 2.0,
+                      power = 2.0,
+                      base = 0 .95) {
   
   if(is.null(ri.data)) {
     train <- cbind(y.data, x.data) 
@@ -22,7 +25,10 @@ bart.flex <- function(x.data, y.data, ri.data = NULL,
     train <- na.omit(train)
     model <- bart(y.train = train[,1], 
                   x.train = train[,2:ncol(train)], 
-                  ntree = n.trees, keeptrees=TRUE)
+                  ntree = n.trees, keeptrees=TRUE,
+                  k = k, 
+                  power = power,
+                  base = base)
   } else { 
     train <- cbind(y.data, x.data, ri.data) 
     if(!is.null(y.name)) {colnames(train)[1] <- y.name}
@@ -40,7 +46,10 @@ bart.flex <- function(x.data, y.data, ri.data = NULL,
                        n.chains=1,
                        n.threads=1,
                        n.trees = n.trees,
-                       keepTrees = TRUE) 
+                       keepTrees = TRUE,
+                       k = k, 
+                       power = power,
+                       base = base) 
   }
   return(model)
 }
