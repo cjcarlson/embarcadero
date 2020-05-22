@@ -36,8 +36,8 @@ varimp <- function(model, plots=FALSE) {
                                                     names(unlist(attr(model$fit$data@x,"drop"))))]
   
   if(length(missing)>0) {
-  message("dbarts auto-dropped this variable. You will probably want to remove it")
-  message(missing, ' \n')
+  message("dbarts auto-dropped this variable(s). You will probably want to remove it")
+    message(paste(missing,collapse = ' '), ' \n')
   }
   
   if(length(missing)>0) {

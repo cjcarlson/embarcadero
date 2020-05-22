@@ -51,8 +51,7 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
     message("Some of your variables have been automatically dropped by dbarts.")
     message("(This could be because they're characters, homogenous, etc.)")
     message("It is strongly recommended that you remove these from the raw data:")
-    print(dropnames)
-    message(" \n")
+    message(paste(dropnames,collapse = ' '), ' \n')
   }
   
   x.data %>% select(-dropnames) -> x.data  
