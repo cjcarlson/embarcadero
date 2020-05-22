@@ -19,13 +19,45 @@
 
 variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, quiet=FALSE) {
   
+  quietly <- function(x) {
+    sink(tempfile())
+    on.exit(sink())
+    invisible(force(x))
+  }  # THANKS HADLEY
+  
   nvars <- ncol(x.data)
   varnums <- c(1:nvars)
   varlist.orig <- varlist <- colnames(x.data)
   
-  comp <- complete.cases(x.data)
-  x.data <- x.data[comp,]
-  y.data <- y.data[comp]
+  #comp <- complete.cases(x.data)
+  
+  #if(length(comp) < (nrow(x.data))) {
+  #  message("Some rows with NA's have been automatically dropped. \n")
+  #}
+  #x.data <- x.data[comp,]
+  #y.data <- y.data[comp]
+  
+  ###############
+  
+  # auto-drops 
+  
+  quietly(model.0 <- bart.flex(x.data = x.data, y.data = y.data, 
+                               ri.data = ri.data,
+                               n.trees = 200))
+  
+  dropnames <- colnames(x.data)[!(colnames(x.data) %in% names(which(unlist(attr(model.0$fit$data@x,"drop"))==FALSE)))]
+  
+  if(length(dropnames)==0) {} else{
+    message("Some of your variables have been automatically dropped by dbarts.")
+    message("(This could be because they're characters, homogenous, etc.)")
+    message("It is strongly recommended that you remove these from the raw data:")
+    print(dropnames)
+    message(" \n")
+  }
+  
+  x.data %>% select(-dropnames) -> x.data  
+  
+  ###############
   
   rmses <- data.frame(Variable.number=c(),RMSE=c())
   dropped.varlist <- c()
@@ -35,12 +67,6 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
     print(noquote(paste("Number of variables included:",var.j)))
     print(noquote("Dropped:"))
     print(if(length(dropped.varlist)==0) {noquote("")} else {noquote(dropped.varlist)})
-    
-    quietly <- function(x) {
-      sink(tempfile())
-      on.exit(sink())
-      invisible(force(x))
-    }  # THANKS HADLEY
     
     rmse.list <- c()
     

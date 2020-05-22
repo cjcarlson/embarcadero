@@ -24,7 +24,28 @@ varimp.diag <- function(x.data, y.data, ri.data=NULL, iter=50, quiet=FALSE) {
     invisible(force(x))
   }  # THANKS HADLEY 4 THIS CODE :) 
 
-
+  ###############
+  
+  # auto-drops 
+  
+  quietly(model.0 <- bart.flex(x.data = x.data, y.data = y.data, 
+                               ri.data = ri.data,
+                               n.trees = 200))
+  
+  dropnames <- colnames(x.data)[!(colnames(x.data) %in% names(which(unlist(attr(model.0$fit$data@x,"drop"))==FALSE)))]
+  
+  if(length(dropnames)==0) {} else{
+    message("Some of your variables have been automatically dropped by dbarts.")
+    message("(This could be because they're characters, homogenous, etc.)")
+    message("It is strongly recommended that you remove these from the raw data:")
+    print(dropnames)
+    message(" \n")
+  }
+  
+  x.data %>% select(-dropnames) -> x.data  
+  
+  ###############
+  
   for (n.trees in c(10, 20, 50, 100, 150, 200)) {
     
     cat(paste('\n', n.trees, 'tree models:', iter, 'iterations\n'))

@@ -23,7 +23,33 @@ bart.step <- function(x.data, y.data, ri.data=NULL,
                       iter.plot=100,
                       full=FALSE,
                       quiet=FALSE) {
-
+  
+  ###############
+  
+  # auto-drops 
+  
+  quietly <- function(x) {
+    sink(tempfile())
+    on.exit(sink())
+    invisible(force(x))
+  }  # THANKS HADLEY
+  quietly(model.0 <- bart.flex(x.data = x.data, y.data = y.data, 
+                               ri.data = ri.data,
+                               n.trees = 200))
+  
+  dropnames <- colnames(x.data)[!(colnames(x.data) %in% names(which(unlist(attr(model.0$fit$data@x,"drop"))==FALSE)))]
+  
+  if(length(dropnames)==0) {} else{
+    message("Some of your variables have been automatically dropped by dbarts.")
+    message("(This could be because they're characters, homogenous, etc.)")
+    message("It is strongly recommended that you remove these from the raw data:")
+    print(dropnames)
+  }
+  
+  x.data %>% select(-dropnames) -> x.data  
+  
+  ###############
+  
   quiet2 <- quiet
   if(full==TRUE){varimp.diag(x.data, y.data, ri.data, iter=iter.plot, quiet=quiet2)}
   vs <- variable.step(x.data, y.data, ri.data, n.trees=tree.step, iter=iter.step, quiet=quiet2)

@@ -3,7 +3,9 @@
 #' @description
 #'
 #' Variable importance, as measured in the proportion of total branches used for a given variable. Error bars show standard deviation across iterations.
-#'
+#' 
+#' Variables that are explicitly dropped in the model are included as "0" in the variable importance table, but not plotted; variables that are included but used zero times are shown in both.
+#' 
 #' @param model The dbarts model object
 #' @param plots Turn this on for a nice variable contribution plot
 #'
@@ -14,16 +16,32 @@
 
 varimp <- function(model, plots=FALSE) {
 
+  if(!("fit" %in% names(model))) {
+    stop("Please add \", keeptrees=TRUE\" to your dbarts model call")
+  }
   if(class(model)=='rbart') {
-    names <- attr(model$fit[[1]]$data@x, "term.labels")
+    basenames <- unlist(attr(model$fit[[1]]$data@x,"drop"))
+    names <- names(which(basenames==FALSE))
     varimps <- rowMeans(model$varcount/colSums(model$varcount))
   }
   if(class(model)=='bart') {
-    names <- attr(model$fit$data@x, "term.labels")
+    basenames <- unlist(attr(model$fit$data@x,"drop"))
+    names <- names(which(basenames==FALSE))
     varimps <- colMeans(model$varcount/rowSums(model$varcount))
   }
   
   var.df <- data.frame(names, varimps)
+  
+  missing <- attr(model$fit$data@x,"term.labels")[!(attr(model$fit$data@x,"term.labels") %in% 
+                                                    names(unlist(attr(model$fit$data@x,"drop"))))]
+  
+  message("dbarts auto-dropped this variable. You will probably want to remove it")
+  message(missing, ' \n')
+  
+  if(length(missing)>0) {
+    missing.df <- data.frame(names = missing, varimps = 0)
+    var.df <- rbind(var.df, missing.df)
+  }
 
   var.df$names <- factor(var.df$names)
   var.df <- transform(var.df, names = reorder(names,
