@@ -47,7 +47,7 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
   
   dropnames <- colnames(x.data)[!(colnames(x.data) %in% names(which(unlist(attr(model.0$fit$data@x,"drop"))==FALSE)))]
   
-  if(length(dropnames)==0) {} else{
+  if(length(dropnames) > 0) {
     message("Some of your variables have been automatically dropped by dbarts.")
     message("(This could be because they're characters, homogenous, etc.)")
     message("It is strongly recommended that you remove these from the raw data:")
@@ -76,7 +76,7 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
                                    ri.data = ri.data,
                                    n.trees = n.trees))
       
-      vi.j <- varimp(model.j)
+      quietly(vi.j <- varimp(model.j))
       if(index==1) {
         vi.j.df <- vi.j
       } else {

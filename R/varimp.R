@@ -35,8 +35,10 @@ varimp <- function(model, plots=FALSE) {
   missing <- attr(model$fit$data@x,"term.labels")[!(attr(model$fit$data@x,"term.labels") %in% 
                                                     names(unlist(attr(model$fit$data@x,"drop"))))]
   
+  if(length(missing)>0) {
   message("dbarts auto-dropped this variable. You will probably want to remove it")
   message(missing, ' \n')
+  }
   
   if(length(missing)>0) {
     missing.df <- data.frame(names = missing, varimps = 0)
