@@ -11,9 +11,9 @@ bart.flex(
   y.name = NULL,
   ri.name = NULL,
   n.trees = 200,
-  k = 2,
-  power = 2,
-  base = 0.95
+  k.prior = 2,
+  power.prior = 2,
+  base.prior = 0.95
 )
 }
 \arguments{
