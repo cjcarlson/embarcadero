@@ -14,10 +14,7 @@
 
 bart.flex <- function(x.data, y.data, ri.data = NULL,
                       y.name = NULL, ri.name = NULL,
-                      n.trees = 200,
-                      k.prior = 2.0,
-                      power.prior = 2.0,
-                      base.prior = 0.95) {
+                      n.trees = 200) {
   
   if(is.null(ri.data)) {
     train <- cbind(y.data, x.data) 
@@ -25,10 +22,7 @@ bart.flex <- function(x.data, y.data, ri.data = NULL,
     train <- na.omit(train)
     model <- bart(y.train = train[,1], 
                   x.train = train[,2:ncol(train)], 
-                  ntree = n.trees, keeptrees=TRUE,
-                  k = k.prior, 
-                  power = power.prior,
-                  base = base.prior)
+                  ntree = n.trees, keeptrees=TRUE)
   } else { 
     train <- cbind(y.data, x.data, ri.data) 
     if(!is.null(y.name)) {colnames(train)[1] <- y.name}
@@ -46,10 +40,8 @@ bart.flex <- function(x.data, y.data, ri.data = NULL,
                        n.chains=1,
                        n.threads=1,
                        n.trees = n.trees,
-                       keepTrees = TRUE,
-                       k = k.prior, 
-                       power = power.prior,
-                       base = base.prior) 
+                       keepTrees = TRUE) 
   }
   return(model)
 }
+

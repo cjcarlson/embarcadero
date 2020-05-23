@@ -73,12 +73,12 @@ predict2.bart <- function(object,
         pred <- dbarts:::predict.rbart(object, 
                                        input.matrix[,!(colnames(input.matrix)==ri.name)], 
                                        group.by=input.matrix[,ri.name],
-                                       value='bart')
+                                       type='bart')
       } else {
         pred <- dbarts:::predict.rbart(object, 
                                        input.matrix[,!(colnames(input.matrix)==ri.name)], 
                                        group.by=input.matrix[,ri.name],
-                                       value='ppd')
+                                       type='ppd')
       }
     } 
     pred.summary <- dfextract(pred, quant=quantiles)
@@ -96,12 +96,12 @@ predict2.bart <- function(object,
                pred <- dbarts:::predict.rbart(object, 
                                               input.str[[i]][,!(colnames(input.str[[i]])==ri.name)], 
                                               group.by=input.str[[i]][,ri.name],
-                                              value='bart')
+                                              type='bart')
              } else {
                pred <- dbarts:::predict.rbart(object, 
                                               input.str[[i]][,!(colnames(input.str[[i]])==ri.name)], 
                                               group.by=input.str[[i]][,ri.name],
-                                              value='ppd')
+                                              type='ppd')
              }
           } 
         pred.summary <- dfextract(pred, quant=quantiles)
@@ -120,7 +120,7 @@ predict2.bart <- function(object,
   }
   
   output <- as.matrix(pred.summary)
-  #output = pnorm(pred.summary)
+  if(class(object)=='rbart') {output = pnorm(pred.summary)}
   
   blankout[whichvals,] <- output
   output <- blankout
