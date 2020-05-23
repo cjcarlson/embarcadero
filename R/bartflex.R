@@ -6,7 +6,9 @@
 #' 
 #' @param x.data A data frame of covariates
 #' @param y.data A vector of outcomes (1/0)
-#' @param ri.data Random intercept data
+#' @param ri.data Random intercept data (a column in a data frame)
+#' @param ri.name Identify the name of the random intercept column 
+#' @param y.name Rename outcome variable from training data if you need to
 #' 
 #' @export 
 #' 
