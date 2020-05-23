@@ -25,17 +25,13 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
     invisible(force(x))
   }  # THANKS HADLEY
   
-  nvars <- ncol(x.data)
-  varnums <- c(1:nvars)
-  varlist.orig <- varlist <- colnames(x.data)
+  comp <- complete.cases(x.data)
   
-  #comp <- complete.cases(x.data)
-  
-  #if(length(comp) < (nrow(x.data))) {
-  #  message("Some rows with NA's have been automatically dropped. \n")
-  #}
-  #x.data <- x.data[comp,]
-  #y.data <- y.data[comp]
+  if(length(comp) < (nrow(x.data))) {
+    message("Some rows with NA's have been automatically dropped. \n")
+  }
+  x.data <- x.data[comp,]
+  y.data <- y.data[comp]
   
   ###############
   
@@ -54,15 +50,19 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
     message(paste(dropnames,collapse = ' '), ' \n')
   }
   
-  x.data %>% select(-dropnames) -> x.data  
+  x.data %>% dplyr::select(-any_of(dropnames)) -> x.data  
   
   ###############
+  
+  nvars <- ncol(x.data)
+  varnums <- c(1:nvars)
+  varlist.orig <- varlist <- colnames(x.data)
   
   rmses <- data.frame(Variable.number=c(),RMSE=c())
   dropped.varlist <- c()
   
   for(var.j in c(nvars:3)) {
-    
+     
     print(noquote(paste("Number of variables included:",var.j)))
     print(noquote("Dropped:"))
     print(if(length(dropped.varlist)==0) {noquote("")} else {noquote(dropped.varlist)})
