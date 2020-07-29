@@ -10,10 +10,7 @@ bart.flex(
   ri.data = NULL,
   y.name = NULL,
   ri.name = NULL,
-  n.trees = 200,
-  k.prior = 2,
-  power.prior = 2,
-  base.prior = 0.95
+  n.trees = 200
 )
 }
 \arguments{
@@ -21,7 +18,11 @@ bart.flex(
 
 \item{y.data}{A vector of outcomes (1/0)}
 
-\item{ri.data}{Random intercept data}
+\item{ri.data}{Random intercept data (a column in a data frame)}
+
+\item{y.name}{Rename outcome variable from training data if you need to}
+
+\item{ri.name}{Identify the name of the random intercept column}
 }
 \description{
 A little internal piece of code that allows you to easily drop random intercepts in. It's a convenience tool I don't suggest using - it's a shortcut for if you feel very comfortable with the pipeline.
