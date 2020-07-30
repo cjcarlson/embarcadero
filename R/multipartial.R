@@ -100,8 +100,7 @@ multipartial <- function(modl, spnames, x.vars = NULL,
       q50 <- data.frame(lapply(pdl, q50f))
       colnames(q50) <- spnames
       if(transform==TRUE) {q50 <- apply(q50, 2, pnorm)}
-      
-      df <- data.frame(x=pdl[[1]]$levs[[i]],q50)
+      q50 %>% as_tibble() %>% mutate(x = pdl[[1]]$levs[[i]]) -> df
     }
     
     df %>% pivot_longer(-x) %>% rename(Species = name) -> df
