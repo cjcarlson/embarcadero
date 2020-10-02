@@ -34,16 +34,16 @@ bart.step <- function(x.data, y.data, ri.data=NULL,
     invisible(force(x))
   }  # THANKS HADLEY
   
+  quietly(model.0 <- bart.flex(x.data = x.data, y.data = y.data, 
+                               ri.data = ri.data,
+                               n.trees = 200))
+  
   if(class(model.0)=='rbart') {
     fitobj <- model.0$fit[[1]]
   }
   if(class(model.0)=='bart') {
     fitobj <- model.0$fit
   }
-  
-  quietly(model.0 <- bart.flex(x.data = x.data, y.data = y.data, 
-                               ri.data = ri.data,
-                               n.trees = 200))
   
   dropnames <- colnames(x.data)[!(colnames(x.data) %in% names(which(unlist(attr(fitobj$data@x,"drop"))==FALSE)))]
   
