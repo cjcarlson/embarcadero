@@ -33,11 +33,19 @@ bart.step <- function(x.data, y.data, ri.data=NULL,
     on.exit(sink())
     invisible(force(x))
   }  # THANKS HADLEY
+  
+  if(class(model.0)=='rbart') {
+    fitobj <- model.0$fit[[1]]
+  }
+  if(class(model.0)=='bart') {
+    fitobj <- model.0$fit
+  }
+  
   quietly(model.0 <- bart.flex(x.data = x.data, y.data = y.data, 
                                ri.data = ri.data,
                                n.trees = 200))
   
-  dropnames <- colnames(x.data)[!(colnames(x.data) %in% names(which(unlist(attr(model.0$fit$data@x,"drop"))==FALSE)))]
+  dropnames <- colnames(x.data)[!(colnames(x.data) %in% names(which(unlist(attr(fitobj$data@x,"drop"))==FALSE)))]
   
   if(length(dropnames)==0) {} else{
     message("Some of your variables have been automatically dropped by dbarts.")

@@ -25,6 +25,14 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
     invisible(force(x))
   }  # THANKS HADLEY
   
+  
+  if(class(model.0)=='rbart') {
+    fitobj <- model.0$fit[[1]]
+  }
+  if(class(model.0)=='bart') {
+    fitobj <- model.0$fit
+  }
+  
   comp <- complete.cases(x.data)
   
   if(length(comp) < (nrow(x.data))) {
@@ -41,7 +49,7 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
                                ri.data = ri.data,
                                n.trees = 200))
   
-  dropnames <- colnames(x.data)[!(colnames(x.data) %in% names(which(unlist(attr(model.0$fit$data@x,"drop"))==FALSE)))]
+  dropnames <- colnames(x.data)[!(colnames(x.data) %in% names(which(unlist(attr(fitobj$data@x,"drop"))==FALSE)))]
   
   if(length(dropnames) > 0) {
     message("Some of your variables have been automatically dropped by dbarts.")
