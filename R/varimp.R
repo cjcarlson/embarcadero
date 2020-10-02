@@ -23,17 +23,19 @@ varimp <- function(model, plots=FALSE) {
     basenames <- unlist(attr(model$fit[[1]]$data@x,"drop"))
     names <- names(which(basenames==FALSE))
     varimps <- rowMeans(model$varcount/colSums(model$varcount))
+    fitobj <- model$fit[[1]]
   }
   if(class(model)=='bart') {
     basenames <- unlist(attr(model$fit$data@x,"drop"))
     names <- names(which(basenames==FALSE))
     varimps <- colMeans(model$varcount/rowSums(model$varcount))
+    fitobj <- model$fit
   }
   
   var.df <- data.frame(names, varimps)
   
-  missing <- attr(model$fit$data@x,"term.labels")[!(attr(model$fit$data@x,"term.labels") %in% 
-                                                    names(unlist(attr(model$fit$data@x,"drop"))))]
+  missing <- attr(fitobj$data@x,"term.labels")[!(attr(fitobj$data@x,"term.labels") %in% 
+                                                    names(unlist(attr(fitobj$data@x,"drop"))))]
   
   if(length(missing)>0) {
   message("dbarts auto-dropped this variable(s). You will probably want to remove it")

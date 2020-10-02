@@ -32,7 +32,13 @@ varimp.diag <- function(x.data, y.data, ri.data=NULL, iter=50, quiet=FALSE) {
                                ri.data = ri.data,
                                n.trees = 200))
   
-  dropnames <- colnames(x.data)[!(colnames(x.data) %in% names(which(unlist(attr(model.0$fit$data@x,"drop"))==FALSE)))]
+  if(class(model.0)=='rbart') {
+    fitobj <- model.0$fit[[1]]
+  }
+  if(class(model.0)=='bart') {
+    fitobj <- model.0$fit
+  }
+  dropnames <- colnames(x.data)[!(colnames(x.data) %in% names(which(unlist(attr(fitobj$data@x,"drop"))==FALSE)))]
   
   if(length(dropnames)==0) {} else{
     message("Some of your variables have been automatically dropped by dbarts.")
