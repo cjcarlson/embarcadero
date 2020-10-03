@@ -58,7 +58,11 @@ varimp <- function(model, plots=FALSE) {
   #  ylab("Relative importance") + theme_bluewhite()
   #print(g1)
   
-  rel <- model$varcount/rowSums(model$varcount)
+  if(class(model)=='rbart') {
+    rel <- t(model$varcount/colSums(model$varcount))
+  } else {
+    rel <- model$varcount/rowSums(model$varcount)
+  }
   colnames(rel) <- names
   
   rel %>% data.frame() %>% gather() %>%
