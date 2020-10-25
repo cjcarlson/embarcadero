@@ -37,7 +37,7 @@ plot.ri <- function(model, temporal=TRUE) {
                          panel.grid.minor = element_blank()) -> p
   } else {
     
-    modelH.ri$ranef %>% data.frame() %>% gather() %>%
+    model$ranef %>% data.frame() %>% gather() %>%
       group_by(key) %>%
       summarise(mean = mean(value),
                 upper = quantile(value, 0.975, na.rm = TRUE),

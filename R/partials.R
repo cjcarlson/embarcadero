@@ -62,7 +62,15 @@ partial <- function(model, x.vars=NULL, equal=TRUE, smooth=1,
 # This is for something else ultimately: attr(bartFit$fit$data@x, "term.labels")
 # This is where equal happens
   
-if (is.null(x.vars)) { raw <- model$fit$data@x} else { raw <- model$fit$data@x[,x.vars]}
+  
+  if(class(model)=='rbart') {
+    fitobj <- model$fit[[1]]
+  }
+  if(class(model)=='bart') {
+    fitobj <- model$fit
+  }
+  
+  if (is.null(x.vars)) { raw <- fitobj$data@x} else { raw <- fitobj$data@x[,x.vars]}
   
   if(equal==TRUE) {
     if(!is.null(x.vars) && length(x.vars)==1) {
@@ -146,7 +154,7 @@ for (i in 1:length(pd$fd)) {
     theme(plot.title = element_text(hjust = 0.5),
           axis.title.y = element_text(vjust=1.7))
   
-  if(ci==TRUE) {alpha2 <- 0.05; k <- 4} else {alpha2 <- 0.025*(model$fit$control@n.trees/200); k <- 2}
+  if(ci==TRUE) {alpha2 <- 0.05; k <- 4} else {alpha2 <- 0.025*(fitobj$control@n.trees/200); k <- 2}
   if(trace==TRUE) {
     if(transform==TRUE) {
       for(j in 1:nrow(pd$fd[[i]])) {
