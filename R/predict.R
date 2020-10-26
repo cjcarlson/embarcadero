@@ -119,8 +119,9 @@ predict2.bart <- function(object,
     }
   }
   
-  output <- as.matrix(pred.summary)
-  if(class(object)=='rbart') {output = pnorm(pred.summary)}
+  if(class(object)=='rbart') {output = pnorm(as.matrix(pred.summary))} else {
+    output <- as.matrix(pred.summary)
+  }
   
   blankout[whichvals,] <- output
   output <- blankout
