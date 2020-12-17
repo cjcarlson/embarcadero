@@ -54,7 +54,7 @@ bart.step <- function(x.data, y.data, ri.data=NULL,
     message(paste(dropnames,collapse = ' '), ' \n')
   }
   
-  x.data %>% select(-dropnames) -> x.data  
+  x.data %>% dplyr::select(-dropnames) -> x.data  
   
   ###############
   
