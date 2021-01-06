@@ -50,7 +50,7 @@ predict2.bart <- function(object,
     }
   }
   
-  input.matrix <- as.matrix(getValues(x.layers))
+  input.matrix <- as.matrix(raster::getValues(x.layers))
   blankout <- data.frame(matrix(ncol=(1+length(quantiles)), 
                                 nrow=ncell(x.layers[[1]])))
   whichvals <- which(complete.cases(input.matrix))
