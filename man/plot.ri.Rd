@@ -4,7 +4,7 @@
 \alias{plot.ri}
 \title{A plot tool for riBART models}
 \usage{
-plot.ri(model, temporal = TRUE)
+\method{plot}{ri}(model, temporal = TRUE)
 }
 \arguments{
 \item{model}{Object of class rbart}
