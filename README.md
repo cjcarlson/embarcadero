@@ -11,19 +11,7 @@ __How do I install__?
 devtools::install_github('cjcarlson/embarcadero')
 ```
 
-Before you do that, you need the "velox" package, which is currently not on CRAN (that should be fixed soon). You can do that one of a couple ways:
-
-```
-remotes::install_github("hunzikp/velox@master")
-```
-
-Or,
-
-```
-devtools::install_version("velox", version = "0.2.0")
-```
-
-**If you have additional issues with velox install on Mac**, it might be because of some underlying issues with your C compiler, the current version of Rcpp (which has a known issue), and/or GDAL. If you leave me an issue I can try to help you figure it out. [Here](https://community.rstudio.com/t/later-package-not-compiling-on-macos-unknown-type-name-uuid-t/57171/2) [are](https://github.com/hunzikp/velox/issues/30) [some](https://github.com/rstudio/httpuv/issues/120) [posts](https://stackoverflow.com/questions/12141422/error-gdal-config-not-found) that were helpful when we recently had some of these issues.
+Note that `embarcadero` no longer requires the `velox` package, and **that the bigstack() function is therefore gone**, but only by popular demand. (Please send all complaints about this to management.)
 
 __What's BART?__ 
 
