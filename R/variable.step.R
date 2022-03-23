@@ -31,7 +31,7 @@ variable.step <- function(x.data, y.data, ri.data=NULL, n.trees=10, iter=50, qui
     message("Some rows with NA's have been automatically dropped. \n")
   }
   x.data <- x.data[comp,]
-  y.data <- y.data[comp]
+  y.data <- y.data[comp,]
   
   ###############
   
