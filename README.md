@@ -1,6 +1,8 @@
 # 🌲🌉 Species distribution models with BART 🌉 🌲
 
-Colin J. Carlson (Georgetown University); February 2020
+Colin J. Carlson (Georgetown University)
+
+*Last updated February 2020*
 
 [![DOI](https://zenodo.org/badge/187687555.svg)](https://zenodo.org/badge/latestdoi/187687555)
 
@@ -54,6 +56,8 @@ The embarcadero package is published at [*Methods in Ecology and Evolution*](htt
 __Can I help__?
 
 Please! Reach out to colin.carlson@georgetown.edu if you want to help with development or otherwise are interested in being one of the first users.
+
+**Update (February 2023)**: Hi all! Thanks for your notes over the past three years. I've been out of the office [soaking in my tub](https://twitter.com/i_zzzzzz/status/1111190076426457088?lang=en), but I'm hoping to make some progress updating embarcadero to current best practices in the coming weeks. In the long run, I'd be interested in potentially handing the package off to someone else to curate, as my availability to do so is very limited - if you think that person should be you, maybe drop me a note.
 
 __Why is it called embarcadero?__
 
