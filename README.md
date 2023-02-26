@@ -13,7 +13,17 @@ __How do I install__?
 devtools::install_github('cjcarlson/embarcadero')
 ```
 
+## Technical stuff 
+
 Note that `embarcadero` no longer requires the `velox` package, and **that the bigstack() function is therefore gone**, but only by popular demand. (Please send all complaints about this to management.)
+
+**Frequently Asked Question**
+
+**Q: My predictions are all generating as 0.5. What should I do?**
+
+A: This is an issue you can find an answer to in the documentation of the `dbarts` package. Essentially, you need to "touch" part of the model object before you save it. For a bart() model `x`, just run `invisible(x$fit$state)` (or for rbart_vi(), run `invisible(x$fit[[1]]$state)`) before you save the model. If you do this, you should be okay making predictions with a saved model (though due to stochasticity, they may be slightly different precise values).
+
+## Other stuff
 
 __What's BART?__ 
 
