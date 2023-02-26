@@ -13,11 +13,11 @@ __How do I install__?
 devtools::install_github('cjcarlson/embarcadero')
 ```
 
-## Technical stuff 
+## Some current FAQs
 
-Note that `embarcadero` no longer requires the `velox` package, and **that the bigstack() function is therefore gone**, but only by popular demand. (Please send all complaints about this to management.)
+**Q: Where did bigstack() go?**
 
-**Frequently Asked Question**
+A: `embarcadero` no longer requires the `velox` package, which unfortunately has fallen into disrepair, and the bigstack() function is therefore gone by popular demand. One of the best things anyone could do for the R spatial community would be to take over `velox` maintenance or create a new clone of it.
 
 **Q: My predictions are all generating as 0.5. What should I do?**
 
