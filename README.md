@@ -15,6 +15,10 @@ devtools::install_github('cjcarlson/embarcadero')
 
 ## Some current FAQs
 
+**Q: Where did the vignette go?**
+
+A: The `NLMR` package appears to be having some maintenance issues with upstream dependencies, so alas, the vignette is gone. It's a shame the R-spatial world is gradually falling apart due to dependency issues right now. 
+
 **Q: Where did bigstack() go?**
 
 A: `embarcadero` no longer requires the `velox` package, which unfortunately has fallen into disrepair, and the bigstack() function is therefore gone by popular demand. One of the best things anyone could do for the R spatial community would be to take over `velox` maintenance or create a new clone of it.
