@@ -14,24 +14,6 @@
 #' 
 #' @return Returns a nice plot
 #' 
-#' @examples 
-#' 
-#' ### RUN THE VIGNETTE UP TO THE FIRST MODEL, FOR THESE TO WORK
-#' s1 <- spartial(sdm, 
-#'                climate,
-#'                x.vars = 'x1')
-#' plot(s1)
-#' 
-#' s1 <- spartial(sdm,
-#'                list(climate, climate*0.9),
-#'                x.vars = 'x1')
-#' plot(s1)
-#' 
-#' s1 <- spartial(sdm,
-#'                list(climate, climate*0.9),
-#'                x.vars = c('x1','x2'))
-#' plot(s1)
-#' 
 #' @export
 
 spartial <- function(model, envs, x.vars=NULL, 

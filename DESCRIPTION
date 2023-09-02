@@ -7,8 +7,8 @@ License: CC0
 Encoding: UTF-8
 LazyData: true
 Depends: raster, dbarts, Metrics, tidyverse, dismo, ROCR, patchwork,
-        ggpubr, matrixStats, data.table
-RoxygenNote: 7.1.1
+        ggpubr, matrixStats, data.table, ggplot2
+RoxygenNote: 7.2.3
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no

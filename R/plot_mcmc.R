@@ -10,60 +10,7 @@
 #' @param wait Adds a Sys.sleep after the plots; because the plots are two-panel they can be a little delayed sometimes, which isn't super visually smooth. However, if you want something that's particularly crisp, I'd suggest using the animation package (see below example).
 #' @param quiet Turns off progress bars if TRUE
 #' 
-#' @examples  
-#' ### Setup
-#' set.seed(42)
-#' onelandscape <- function(x) {NLMR::nlm_gaussianfield(nrow = 150,
-#'                                                      ncol = 150,
-#'                                                      rescale = FALSE)}
-#' climate <- stack(lapply(c(1:8), onelandscape))
-#' xnames <- c('x1','x2','x3','x4','x5','x6','x7','x8')
-#' names(climate) <- xnames
-#' 
-#' plot(climate[[1]],main='An imaginary variable')
-#' random.sp <- generateRandomSp(climate[[1:4]], 
-#'                               # ^ These are the informative predictors
-#'                               approach="pca",
-#'                               relations='gaussian',
-#'                               species.prevalence=0.5,
-#'                               realistic.sp = TRUE,
-#'                               PA.method='threshold')
-#' sp.points <- sampleOccurrences(random.sp,
-#'                                n=250,
-#'                                type = 'presence-absence',
-#'                                detection.probability = 0.9)
-#' occ <- SpatialPoints(sp.points$sample.points[,c('x','y')])
-#' occ.df <- cbind(sp.points$sample.points,
-#'                 raster::extract(climate, occ))
-#' occ.df <- occ.df[,-c(1:3)]
-#' 
-#' ### The actual example 
-#' 
-#' sdm <- bart(y.train=occ.df[,'Observed'],
-#'             x.train=occ.df[,xnames],
-#'             keeptrees = TRUE)
-#'             
-#' plot.mcmc(sdm, climate, iter=50)
-#' 
-#' sdm <- bart(y.train=occ.df[,'Observed'],
-#'             x.train=occ.df[,xnames],
-#'             keeptrees = TRUE,
-#'             nskip=0,
-#'             ntree=10)
-#'             
-#' plot.mcmc(sdm, climate, iter=50)
-#' 
-#' ###If you want to animate it:
-#' 
-#' library(animation)
-#' 
-#' saveGIF(plot.mcmc(sdm, climate, iter=50), movie.name = "Timelapse.gif", interval = 0.15, 
-#'         ani.width = 800, ani.height = 400)
-#' 
 #' @export
-#'
-#'
-#'
 
 plot.mcmc <- function(object, inputstack, iter=100, wait=0.1, quiet=FALSE) {
   

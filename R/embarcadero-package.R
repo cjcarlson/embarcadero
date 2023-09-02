@@ -14,6 +14,7 @@
 #' @import Metrics
 #' @import tidyverse
 #' @import dismo
+#' @import ggplot2
 #'
 #'
 #'
