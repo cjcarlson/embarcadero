@@ -4,6 +4,8 @@
 #' @description
 #' An all-purpose model summary tool, which reports the model call, an AUC value (the area under the receiver-operator curve), and the optimal threshold based on the true skill statistic (and return the associated Type I and II error rates). 
 #' 
+#' This summary also returns the symmetric Extremal Dependence Index (SEDI) from Ferro and Stephenson (2011) and Wunderlich et al. (2019), which is recommended as an alternative goodness-of-fit statistic to the TSS.
+#' 
 #' There are also four diagnostic plots generated (plots=FALSE to turn off): the receiver-operator curve; a histogram of fitted values; the threshold-performance curve, which reports the true skill statistic for a given cutoff, and has a line at the optimal value; and a dotplot showing the fitted values split by the threshold and the true y values in the data.
 #' 
 #' This is currently compatible with rbart objects but returns the AUC and diagnostics on the model fits WITHOUT THE RANDOM EFFECTS INCORPORATED. Future versions need to add the option to include random effects, to do an AUC with/without.
@@ -14,7 +16,7 @@
 #' @export
 #'
 
-summary.bart <- function(object, plots=TRUE) {
+summary.bart <- function(object, plots=TRUE)  {
   
   
   if(class(object)=='bart') {fitobj <- object$fit} else 
@@ -32,15 +34,33 @@ summary.bart <- function(object, plots=TRUE) {
   perf.tss <- performance(pred,"sens","spec")
   tss.list <- (perf.tss@x.values[[1]] + perf.tss@y.values[[1]] - 1)
   tss.df <- data.frame(alpha=perf.tss@alpha.values[[1]],tss=tss.list)
+
+  # If the values equal 0 SEDI yields infinity, therefore can still be interpreted by adding an infinitely small number to those cells contained zeros (Wunderlich et al. 2019)
+  small.num <- 1e-09
+  tpr <- perf.tss@x.values[[1]]
+  tpr[tpr == 0] <- small.num
+  fpr <- 1-perf.tss@y.values[[1]]
+  fpr[fpr == 0] <- small.num
+  tnr <- 1 - fpr
+  fnr <- 1 - tpr
+  tnr[tnr == 0] <- small.num
+  fnr[fnr == 0] <- small.num
+  s <- (log(fpr) - log(tpr) - log(tnr) + log(fnr))/(log(fpr) +
+        log(tpr) + log(tnr) + log(fnr))
+  
+  sedi.df <- data.frame(alpha=perf.tss@alpha.values[[1]],sedi=s)
   
   auc <- performance(pred,"auc")@y.values[[1]]
   cat('Area under the receiver-operator curve', "\n")
   cat('AUC =', auc, "\n", "\n")
   
   thresh <- min(tss.df$alpha[which(tss.df$tss==max(tss.df$tss))])
+  thresh.sedi <- min(sedi.df$alpha[which(sedi.df$sedi==max(sedi.df$sedi))])
   cat('Recommended threshold (maximizes true skill statistic)', "\n")
   cat('Cutoff = ', thresh, "\n")
   cat('TSS = ', tss.df[which(tss.df$alpha==thresh),'tss'], "\n")
+  cat('SEDI Cutoff = ', thresh.sedi, "\n")
+  cat('SEDI = ', sedi.df[which(sedi.df$alpha==thresh),"sedi"], "\n")
   cat('Resulting type I error rate: ',1-perf.tss@y.values[[1]][which(perf.tss@alpha.values[[1]]==thresh)], "\n") # Type I error rate
   cat('Resulting type II error rate: ', 1-perf.tss@x.values[[1]][which(perf.tss@alpha.values[[1]]==thresh)], "\n") # Type II error rate
   
