@@ -89,10 +89,10 @@ partial <- function(model, x.vars=NULL, equal=TRUE, smooth=1,
       }
     }
     
-    pd <- pdbart(model, xind = x.vars, levs = lev, pl=FALSE)
+    pd <- pdbart(fitobj, xind = x.vars, levs = lev, pl=FALSE)
   } else {
     levq = c(0.5 - ciwidth/2, seq(0.1, 0.9, 0.1/smooth), 0.5 + ciwidth/2)
-    pd <- pdbart(model, xind = x.vars, levquants = levq, pl=FALSE)
+    pd <- pdbart(fitobj, xind = x.vars, levquants = levq, pl=FALSE)
   }
  
   
