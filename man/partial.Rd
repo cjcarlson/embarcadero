@@ -21,7 +21,7 @@ partial(
 
 \item{x.vars}{A list of the variables for which you want to run the partials. Defaults to doing all of them.}
 
-\item{equal}{Spacing x levels equally instead of using quantiles, which is how dbarts does this normally (the distribution of points reflects the distribution of samples in the data - this makes weird patterns that don't look very smooth)}
+\item{equal}{Spacing x levels equally instead of using quantiles, which is how dbarts does this normally (the distribution of points reflects the distribution of samples in the data - this makes weird patterns that don't look very smooth. For categorical variables, better set equal=FALSE.)}
 
 \item{smooth}{A multiplier for how much smoother you want the sampling of the levels to be. High values, like 10 or over, are obviously much slower and don't add much.}
 
